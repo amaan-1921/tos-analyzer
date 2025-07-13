@@ -1,0 +1,43 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.python-version
+.pyvenv.cfg
+
+# IDE/editor config
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and debug
+*.log
+logs/
+*.log.*
+
+# Sensitive files
+.env
+secrets/
+*.key
+*.pem
+*.cert
+config.ini
+credentials.json
+
+# Testing / coverage
+.coverage
+coverage.xml
+.pytest_cache/
+htmlcov/
+
+# Temp/backup
+*.swp
+*.bak
+*~
