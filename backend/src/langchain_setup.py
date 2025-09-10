@@ -1,10 +1,15 @@
 import os
 from neo4j import GraphDatabase
 
+from config import ensure_google_api_key
+ensure_google_api_key()
+
 # LangChain imports
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.llms import HuggingFacePipeline
-from transformers import pipeline
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+
+
 
 def test_neo4j_connection():
     """Simple connection test"""
@@ -18,14 +23,11 @@ embeddings = HuggingFaceEmbeddings(
 )
 
 
-hf_pipeline = pipeline(
-    "text-generation",
-    model="gpt2",
-    device=-1,  # -1 = CPU, 0 = first GPU
-    max_new_tokens=100
+# Use Gemini as LLM
+llm = ChatGoogleGenerativeAI(
+    model="gemini-1.5-flash",   # or "gemini-1.5-pro" for more accuracy
+    temperature=0.2
 )
-
-llm = HuggingFacePipeline(pipeline=hf_pipeline)
 
 NEO4J_URI = os.getenv("NEO4J_URL", "bolt://localhost:7687")
 NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
@@ -36,3 +38,7 @@ driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 if __name__ == "__main__":
     print("Testing Neo4j connection...")
     test_neo4j_connection()
+    
+    # Quick LLM test
+    response = llm.invoke("Explain what Neo4j is in one sentence.")
+    print(response.content)

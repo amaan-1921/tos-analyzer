@@ -12,10 +12,13 @@ import os
 import shutil
 from datetime import datetime
 
+from config import ensure_google_api_key
+ensure_google_api_key()
+
 from fastapi import FastAPI, HTTPException, UploadFile, File, status
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-from langchain_setup import test_connection
+from langchain_setup import test_neo4j_connection
 
 from models import QueryIn
 
@@ -46,7 +49,7 @@ async def check_neo4j():
     and prints the status to the container logs
     """
     try:
-        test_connection()
+        test_neo4j_connection()
         print("Connection made.")
     except Exception as e:
         print("Connection not made.")
@@ -91,7 +94,7 @@ def ingest(file: UploadFile = File(...)):
     """
     doc_id = str(uuid.uuid4())
     try:
-        ext = os.path.splitext(file.filename)[1]
+        ext = os.path.splitext(file.filename)[1] # type: ignore
         dest = os.path.join(UPLOAD_DIR, f"{doc_id}{ext}")
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
