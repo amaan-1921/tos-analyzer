@@ -6,7 +6,7 @@ like embedding generation, and chunking.
 """
 
 from oopsies import PDFExtractionError, HTMLExtractionError, IngestionError
-
+from sentence_transformers import SentenceTransformer
 import os
 import spacy
 import re
@@ -16,7 +16,7 @@ from typing import List
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
-
+embedding_model = SentenceTransformer("nlpaueb/legal-bert-small-uncased")
 
 def segment_clauses(text: str) -> List[str]:
     """
@@ -156,6 +156,38 @@ def chunk_text_spacy(text, max_chunk_size=500, overlap=1):
         chunks.append(" ".join(current_chunk_sents))
 
     return chunks
-text = "This is a short sentence. This is another short one."
-chunks = chunk_text_spacy(text, max_chunk_size=100, overlap=1)
-print(chunks)
+
+def embed_chunks(chunks):
+    """
+    Generate embeddings for a list of text chunks using Legal-BERT Small.
+
+    Args:
+        chunks (list[str]): List of text chunks.
+
+    Returns:
+        list[np.ndarray]: List of embeddings corresponding to each chunk.
+    """
+    embeddings = embedding_model.encode(chunks, convert_to_numpy=True)
+    return embeddings
+
+def extract_entities(text: str):
+    """
+    Extract named entities from the text.
+
+    Args:
+        text (str): Input text to extract entities from.
+
+    Returns:
+        List[dict]: A list of dictionaries, each with keys:
+                    'text', 'label', 'start', 'end'
+    """
+    doc = nlp(text)
+    entities = []
+    for ent in doc.ents:
+        entities.append({
+            "text": ent.text,
+            "label": ent.label_,
+            "start": ent.start_char,
+            "end": ent.end_char
+        })
+    return entities
