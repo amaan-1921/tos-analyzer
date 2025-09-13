@@ -8,9 +8,6 @@ ensure_google_api_key()
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-
-
-
 def test_neo4j_connection():
     """Simple connection test"""
     with driver.session() as session:
@@ -21,7 +18,6 @@ def test_neo4j_connection():
 embeddings = HuggingFaceEmbeddings(
     model_name="sentence-transformers/all-MiniLM-L6-v2"
 )
-
 
 # Use Gemini as LLM
 llm = ChatGoogleGenerativeAI(
