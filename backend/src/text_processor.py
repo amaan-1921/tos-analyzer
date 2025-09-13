@@ -1,12 +1,13 @@
-"""
+""""
 Text Processing Utility.
 
 This module provides basic text processing required for various RAG purposes 
 like embedding generation, and chunking.
 """
 
-from oopsies import PDFExtractionError, HTMLExtractionError, GeneralIngestionError
+from oopsies import PDFExtractionError, HTMLExtractionError, IngestionError
 
+import os
 import spacy
 import re
 from PyPDF2 import PdfReader
@@ -62,7 +63,9 @@ def load_text(path: str) -> str:
         str: The extracted text from the file referenced by the path
         parameter.
     """
-    ext = re.split(re.split(path, "/")[-1], ".")[1]
+    path = os.path.expanduser(path)
+    _, ext = os.path.splitext(path)
+    ext = ext.lower().lstrip(".")
     if ext == "pdf":
         return extract_pdf_text(path)
     elif ext == "txt":
@@ -71,7 +74,7 @@ def load_text(path: str) -> str:
     elif ext == "html":
         return extract_html_text(path)
     else:
-        raise GeneralIngestionError("Unsupported file type. Only use pdf, html, and txt") 
+        raise IngestionError("Unsupported file type. Only use pdf, html, and txt") 
 
 
 def extract_pdf_text(path: str) -> str:
@@ -113,6 +116,7 @@ def extract_html_text(path: str) -> str:
     """
     with open(path, "r", encoding="utf-8") as f:
         html = f.read()
+        
     soup = BeautifulSoup(html, "html.parser")
 
     for tag in soup(["script", "style", "noscript"]):
