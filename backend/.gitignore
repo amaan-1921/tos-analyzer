@@ -41,3 +41,5 @@ htmlcov/
 *.swp
 *.bak
 *~
+google_api_key.txt
+config.py
