@@ -1,7 +1,7 @@
 """"
 Text Processing Utility.
 
-This module provides basic text processing required for various RAG purposes 
+This module provides basic text processing required for various RAG purposes
 like embedding generation, and chunking.
 """
 
@@ -23,7 +23,7 @@ def segment_clauses(text: str) -> List[str]:
     Generates a list of clauses from a string of collection of clauses.
 
     Args:
-        text (str): The string which is to be segmented into clauses. 
+        text (str): The string which is to be segmented into clauses.
 
     Returns:
         List[str]: A list of strings, where each string is a self contained
@@ -74,7 +74,7 @@ def load_text(path: str) -> str:
     elif ext == "html":
         return extract_html_text(path)
     else:
-        raise IngestionError("Unsupported file type. Only use pdf, html, and txt") 
+        raise IngestionError("Unsupported file type. Only use pdf, html, and txt")
 
 
 def extract_pdf_text(path: str) -> str:
@@ -111,12 +111,12 @@ def extract_html_text(path: str) -> str:
         path (str): The filepath of the HTML document whose text is to extracted.
 
     Returns:
-        str: The extracted text from the HTML file whose filepath is provided in a 
+        str: The extracted text from the HTML file whose filepath is provided in a
         single string.
     """
     with open(path, "r", encoding="utf-8") as f:
         html = f.read()
-        
+
     soup = BeautifulSoup(html, "html.parser")
 
     for tag in soup(["script", "style", "noscript"]):
@@ -124,3 +124,38 @@ def extract_html_text(path: str) -> str:
 
     text = soup.get_text(separator="\n")
     return text
+
+def chunk_text_spacy(text, max_chunk_size=500, overlap=1):
+    """
+    Break text into sentence-based chunks using spaCy.
+
+    Args:
+        text (str): Text to chunk.
+        max_chunk_size (int): Max characters per chunk. Defaults to 500.
+        overlap (int): Number of overlapping sentences between chunks. Defaults to 1. -1 for no overlap
+
+    Returns:
+        list[str]: List of text chunks.
+    """
+    doc = nlp(text)
+    sentences = [sent.text.strip() for sent in doc.sents]
+
+    chunks = []
+    current_chunk_sents = []
+
+    for sent in sentences:
+        temp = " ".join(current_chunk_sents + [sent])
+        if len(temp) <= max_chunk_size or not current_chunk_sents:
+            current_chunk_sents.append(sent)
+        else:
+            if current_chunk_sents:            # ✅ avoid appending empty
+                chunks.append(" ".join(current_chunk_sents))
+            current_chunk_sents = current_chunk_sents[-overlap:] + [sent]
+
+    if current_chunk_sents:
+        chunks.append(" ".join(current_chunk_sents))
+
+    return chunks
+text = "This is a short sentence. This is another short one."
+chunks = chunk_text_spacy(text, max_chunk_size=100, overlap=1)
+print(chunks)
