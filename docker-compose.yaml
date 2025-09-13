@@ -2,6 +2,8 @@ services:
   backend:
     build: ./backend/
     container_name: tos-backend
+    volumes:
+      - ./backend/uploads:/app/uploads
     ports:
       - 8000:8000
     environment:

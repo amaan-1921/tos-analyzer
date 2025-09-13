@@ -5,9 +5,12 @@ This module provides basic text processing required for various RAG purposes
 like embedding generation, and chunking.
 """
 
+from oopsies import PDFExtractionError, HTMLExtractionError, GeneralIngestionError
+
 import spacy
 import re
 from PyPDF2 import PdfReader
+from bs4 import BeautifulSoup
 from typing import List
 
 # Load spaCy model
@@ -39,6 +42,38 @@ def segment_clauses(text: str) -> List[str]:
 
     return clauses
 
+def load_text(path: str) -> str:
+    """
+    Abstraction function to recognise the uploaded file's format
+    and call the appropiate function to read the text and return
+    the read string of text.
+
+    Args:
+        path (str): The filepath of the file to be read.
+
+    Raises:
+        FileNotFoundError: When the referenced file is not found /
+        does not exist.
+
+        GeneralIngestionError: When the referenced file is a PDF that cannot be read,
+        or some other unexpected file error.
+
+    Returns:
+        str: The extracted text from the file referenced by the path
+        parameter.
+    """
+    ext = re.split(re.split(path, "/")[-1], ".")[1]
+    if ext == "pdf":
+        return extract_pdf_text(path)
+    elif ext == "txt":
+        with open(path, "r", encoding="utf-8") as f:
+            return f.read()
+    elif ext == "html":
+        return extract_html_text(path)
+    else:
+        raise GeneralIngestionError("Unsupported file type. Only use pdf, html, and txt") 
+
+
 def extract_pdf_text(path: str) -> str:
     """
     Extracts the text in the PDF referenced by the provided path.
@@ -61,6 +96,27 @@ def extract_pdf_text(path: str) -> str:
             text = text + "\n" + reader.pages[i].extract_text()
 
     except Exception as e:
-        raise Exception(str(e))
+        raise PDFExtractionError(str(e)) from e
 
+    return text
+
+def extract_html_text(path: str) -> str:
+    """
+    Extracts the text in the HTML referenced bby th provided path
+
+    Args:
+        path (str): The filepath of the HTML document whose text is to extracted.
+
+    Returns:
+        str: The extracted text from the HTML file whose filepath is provided in a 
+        single string.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        html = f.read()
+    soup = BeautifulSoup(html, "html.parser")
+
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
+
+    text = soup.get_text(separator="\n")
     return text
