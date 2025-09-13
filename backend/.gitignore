@@ -41,3 +41,7 @@ htmlcov/
 *.swp
 *.bak
 *~
+
+
+.env
+config.py
