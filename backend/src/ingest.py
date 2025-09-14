@@ -16,6 +16,9 @@ import text_processor as tp
 nlp = spacy.load("en_core_web_sm")
 TRIPLE_PATTERN = re.compile(r"^\(.+?,.+?,.+?\)$")
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 def store_chunks_in_neo4j(chunks: List[str], embeddings: List) -> List[str]:
     """
