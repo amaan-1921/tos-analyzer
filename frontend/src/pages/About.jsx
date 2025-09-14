@@ -1,10 +1,11 @@
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-function About({ setCurrentPage }) {
+
+function About({ setCurrentPage, goHome }) {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-gray-900 to-black pb-20">
-      <Navbar setCurrentPage={setCurrentPage} />
+      <Navbar setCurrentPage={setCurrentPage} goHome={goHome} />
       <main className="flex-grow container mx-auto px-6 py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-medium text-white mb-8 font-serif text-center">
@@ -61,7 +62,7 @@ function About({ setCurrentPage }) {
           
           <div className="text-center">
             <button 
-              onClick={() => setCurrentPage('home')}
+              onClick={() => goHome ? goHome() : setCurrentPage('home')}
               className="px-8 py-3 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-400 hover:to-blue-400 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               Back to Home

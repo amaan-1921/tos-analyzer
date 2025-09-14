@@ -10,25 +10,35 @@ import HowItWorks from './pages/HowItWorks';
 import { useResults } from './components/ResultsContext';
 
 function App() {
-  const { hasAnalysisResults, showChat, setShowChat } = useResults();
+  const { hasAnalysisResults, showChat, setShowChat, setResults, setHasAnalysisResults, setError, setChatMessages } = useResults();
   const [currentPage, setCurrentPage] = useState('home');
 
   const closeChat = () => {
     setShowChat(false);
   };
 
+  const goHome = () => {
+    setCurrentPage('home');
+    // Reset all analysis state when going home
+    setResults([]);
+    setHasAnalysisResults(false);
+    setError(null);
+    setChatMessages([]);
+    setShowChat(false);
+  };
+
   // Handle page navigation
   if (currentPage === 'about') {
-    return <About setCurrentPage={setCurrentPage} />;
+    return <About setCurrentPage={setCurrentPage} goHome={goHome} />;
   }
   
   if (currentPage === 'how-it-works') {
-    return <HowItWorks setCurrentPage={setCurrentPage} />;
+    return <HowItWorks setCurrentPage={setCurrentPage} goHome={goHome} />;
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-black via-gray-900 to-black pb-20 relative">
-      <Navbar setCurrentPage={setCurrentPage} />
+      <Navbar setCurrentPage={setCurrentPage} goHome={goHome} />
       <main className={`flex-grow flex flex-col transition-all duration-500 ${showChat ? 'pt-4' : 'justify-center items-center px-6'}`}>
         {!hasAnalysisResults ? (
           <div className="w-full max-w-4xl mx-auto text-center">

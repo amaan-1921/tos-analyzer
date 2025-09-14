@@ -1,6 +1,8 @@
-function Navbar({ setCurrentPage }) {
+function Navbar({ setCurrentPage, goHome }) {
   const handleHomeClick = () => {
-    if (setCurrentPage) {
+    if (goHome) {
+      goHome();
+    } else if (setCurrentPage) {
       setCurrentPage('home');
     }
   };
