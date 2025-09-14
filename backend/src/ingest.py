@@ -200,5 +200,4 @@ def ingest(filepath: str):
     # --- Run initial analysis ---
     analysis_json = generate_initial_analysis(chunk_dicts)
     logger.info(f"Initial Analysis Complete for {filepath}")
-    print(analysis_json)
     return analysis_json
