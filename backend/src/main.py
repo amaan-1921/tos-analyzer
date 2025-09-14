@@ -5,18 +5,22 @@ This module instantiates the FastAPI application, configures CORS middleware, ma
 all required endpoints with different functionalities that are required for the application.
 """
 
-from contextlib import asynccontextmanager
 import logging
 import uuid
 import os
+import json
 import shutil
+
 from datetime import datetime
 from ingest import ingest as ingested
+
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 from langchain_setup import test_neo4j_connection
 from models import QueryIn
+from retrieve import generate_initial_analysis, get_similar_chunks
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -90,16 +94,17 @@ def ingest(file: UploadFile = File(...)):
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         with open(dest, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        # TODO: call ingestion util here
         logger.info(f"File {file.filename} saved as {dest}")
-        ingested(dest)
+        json_analysis = ingested(dest)
+        analysis_data = json.loads(json_analysis)
+        return analysis_data
 
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to decode JSON: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         logger.error(f"Failed to ingest file: {e}")
         raise HTTPException(status_code=422, detail=str(e))
-
-    return {"doc_id": doc_id, "status": "ingested"}
-
 
 @app.post("/query")
 def query(q: QueryIn):
@@ -108,9 +113,19 @@ def query(q: QueryIn):
     This endpoint queries the LLM, which uses RAG to give accurate answers.
     """
     try:
-        # TODO: call retriever util here
-        response = {"answer": "This is a placeholder."}
-        return response
+        retrieved_chunks = get_similar_chunks(q.query, q.namespace, k = 10)
+        if not retrieved_chunks:
+            return []
+
+        json_analysis = generate_initial_analysis(retrieved_chunks)
+
+        analysis_data = json.loads(json_analysis)
+
+        return analysis_data
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse analysis JSON from LLM: {e}")
+        raise HTTPException(status_code=500, detail="Invalid JSON format from analysis")
     except Exception as e:
         logger.error(f"Query failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))

@@ -5,7 +5,9 @@ import json
 import uuid
 import re
 from typing import List, Tuple
+import logging
 
+from retrieve import generate_initial_analysis
 import spacy
 from langchain_setup import driver, llm
 import text_processor as tp
@@ -171,3 +173,8 @@ def ingest(filepath: str):
         chunk_text = chunk["chunk"]
         triples = extract_triples_from_chunk(chunk_text)
         store_triples(triples, chunk_id)
+
+    logger.info(f"Ingestion Complete for {filepath}")
+    analysis_json = generate_initial_analysis(chunks)
+    logger.info(f"Initial Analysis Complete for {filepath}")
+    return analysis_json

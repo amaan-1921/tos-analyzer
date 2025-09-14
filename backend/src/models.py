@@ -14,6 +14,7 @@ class QueryIn(BaseModel):
     namespace: str # which document/KG to query
 
 class QueryOut(BaseModel):
-    query: str
-    response: str
-    context_chunks: Optional[List[Dict]]
+    clause_text: str
+    label: str
+    reasoning: str
+    risk_category: str
