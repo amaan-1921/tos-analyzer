@@ -43,3 +43,5 @@ htmlcov/
 *~
 google_api_key.txt
 config.py
+
+uploads/

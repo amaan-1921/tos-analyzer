@@ -4,7 +4,7 @@ Combines vector DB retrieval and KG triples for context-aware LLM responses.
 """
 import json
 from typing import List, Dict
-
+import re
 from langchain_setup import driver, embedding_model, llm
 
 
@@ -121,7 +121,9 @@ def generate_initial_analysis(retrieved_chunks: List[Dict]) -> str:
                 chunk_id=chunk_id
             )
             triples = [f"({r['subject']}, {r['relation']}, {r['object']})" for r in result]
-            enriched_text.append(chunk_text + "\nTriples:\n" + ("\n".join(triples) if triples else "None"))
+            enriched_text.append(
+                chunk_text + "\nTriples:\n" + ("\n".join(triples) if triples else "None")
+            )
 
     document_text = "\n\n".join(enriched_text)
 
@@ -149,11 +151,31 @@ Return response as JSON array of objects:
 """
     try:
         response = llm.invoke(prompt)
-        return getattr(response, "content", str(response))
+        raw = getattr(response, "content", str(response)).strip()
+
+        if not raw:
+            raise ValueError("LLM returned empty response")
+
+        # Try to find all {...} blocks anywhere in the response
+        objects = re.findall(r"\{.*?\}", raw, flags=re.DOTALL)
+
+        if not objects:
+            # No valid JSON objects found
+            return json.dumps({"error": "No clauses found"})
+
+        # Join all objects into one JSON array
+        json_array = "[" + ",".join(objects) + "]"
+
+        parsed = json.loads(json_array)
+
+        if isinstance(parsed, dict):
+            parsed = [parsed]
+
+        return json.dumps(parsed, ensure_ascii=False, indent=2)
+
     except Exception as e:
         print(f"Error invoking LLM for initial analysis: {e}")
         return json.dumps({"error": "Failed to generate analysis"})
-
 
 # ----------------- TEST CASE -----------------
 if __name__ == "__main__":

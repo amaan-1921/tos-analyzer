@@ -186,6 +186,19 @@ def ingest(filepath: str):
         store_triples(triples, chunk_id)
 
     logger.info(f"Ingestion Complete for {filepath}")
-    analysis_json = generate_initial_analysis(chunks)
+
+    # --- Fetch all chunks from Neo4j ---
+    with driver.session() as session:
+        result = session.run(
+            """
+            MATCH (c:Chunk)
+            RETURN c.id AS chunk_id, c.text AS text
+            """
+        )
+        chunk_dicts = [record.data() for record in result]
+
+    # --- Run initial analysis ---
+    analysis_json = generate_initial_analysis(chunk_dicts)
     logger.info(f"Initial Analysis Complete for {filepath}")
+    print(analysis_json)
     return analysis_json
