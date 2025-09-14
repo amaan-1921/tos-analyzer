@@ -2,9 +2,9 @@
 Ingestion Utility for uploaded documents
 
 """
-
+import json
 from langchain_setup import driver, llm
-
+import text_processor as tp
 import spacy
 import re
 from typing import List, Tuple
@@ -17,7 +17,7 @@ TRIPLE_PATTERN = re.compile(r"^\(\s*[^,]+,\s*[^,]+,\s*[^,]+\s*\)$")
 def store_chunks_in_neo4j(chunks, embeddings):
     """
     Stores chunks as nodes in the Neo4J database using the driver
-    defined in langchain_setup. Creates a node with the values(id, 
+    defined in langchain_setup. Creates a node with the values(id,
     text, and embedding).
 
     Args:
@@ -41,7 +41,7 @@ def store_chunks_in_neo4j(chunks, embeddings):
                 """,
                 id=str(i),
                 text=chunk,
-                embedding=emb.tolist()  
+                embedding=emb.tolist()
             )
 
 def extract_triples_from_chunk(chunk_text: str) -> List[Tuple[str, str, str]]:
@@ -59,6 +59,7 @@ def extract_triples_from_chunk(chunk_text: str) -> List[Tuple[str, str, str]]:
 
     prompt = f"Extract subject-relation-object triples from this text:\n {chunk_text} \nOutput as (S,R,O) tuples."
     response = llm.invoke(prompt)
+    print(response.content)
     # Assuming response.content is parseable; e.g., "(User, agrees_to_share, Data)"
     triples : List[Tuple[str, str, str]] = []
     lines : list[str] = []
@@ -82,7 +83,7 @@ def extract_triples_from_chunk(chunk_text: str) -> List[Tuple[str, str, str]]:
 
     if not triples:
         print("No suitable triples found. Returning empty list")
-    
+
     return triples
 
 def store_triples(triples, chunk_id):
@@ -118,3 +119,14 @@ def store_triples(triples, chunk_id):
                 chunk_id=chunk_id
             )
 
+def ingest(filepath):
+    text=tp.load_text(filepath)
+    chunks_list=tp.chunk_text_spacy(text)
+    chunks = [item["chunk"] for item in chunks_list]
+    embeddings=tp.embed_chunks(chunks)
+    store_chunks_in_neo4j(chunks,embeddings)
+    for chunk_element in chunks_list:
+        ner=tp.extract_entities(chunk_element["chunk"])
+        json_ner= json.dumps(ner)
+        triples=extract_triples_from_chunk(json_ner)
+        store_triples(triples,chunk_element["id"])

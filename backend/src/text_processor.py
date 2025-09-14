@@ -13,6 +13,7 @@ import re
 from PyPDF2 import PdfReader
 from bs4 import BeautifulSoup
 from typing import List
+import uuid
 
 # Load spaCy model
 nlp = spacy.load("en_core_web_sm")
@@ -124,18 +125,17 @@ def extract_html_text(path: str) -> str:
 
     text = soup.get_text(separator="\n")
     return text
-
 def chunk_text_spacy(text, max_chunk_size=500, overlap=1):
     """
-    Break text into sentence-based chunks using spaCy.
+    Break text into sentence-based chunks using spaCy, each with a unique ID.
 
     Args:
         text (str): Text to chunk.
         max_chunk_size (int): Max characters per chunk. Defaults to 500.
-        overlap (int): Number of overlapping sentences between chunks. Defaults to 1. -1 for no overlap
+        overlap (int): Number of overlapping sentences between chunks. Defaults to 1. -1 for no overlap.
 
     Returns:
-        list[str]: List of text chunks.
+        list[dict]: List of dicts like {"id": <uuid>, "chunk": <str>}.
     """
     doc = nlp(text)
     sentences = [sent.text.strip() for sent in doc.sents]
@@ -148,15 +148,19 @@ def chunk_text_spacy(text, max_chunk_size=500, overlap=1):
         if len(temp) <= max_chunk_size or not current_chunk_sents:
             current_chunk_sents.append(sent)
         else:
-            if current_chunk_sents:            # ✅ avoid appending empty
+            if current_chunk_sents:
                 chunks.append(" ".join(current_chunk_sents))
-            current_chunk_sents = current_chunk_sents[-overlap:] + [sent]
+            # handle overlap
+            if overlap > 0:
+                current_chunk_sents = current_chunk_sents[-overlap:] + [sent]
+            else:
+                current_chunk_sents = [sent]
 
     if current_chunk_sents:
         chunks.append(" ".join(current_chunk_sents))
 
-    return chunks
-
+    # wrap with UUIDs
+    return [{"id": str(uuid.uuid4()), "chunk": chunk} for chunk in chunks]
 def embed_chunks(chunks):
     """
     Generate embeddings for a list of text chunks using Legal-BERT Small.
