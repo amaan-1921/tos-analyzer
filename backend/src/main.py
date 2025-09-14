@@ -113,7 +113,7 @@ def query(q: QueryIn):
     This endpoint queries the LLM, which uses RAG to give accurate answers.
     """
     try:
-        retrieved_chunks = get_similar_chunks(q.query, q.namespace, k = 10)
+        retrieved_chunks = get_similar_chunks(q.query, k = 10)
         if not retrieved_chunks:
             return []
 
