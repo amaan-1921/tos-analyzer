@@ -18,3 +18,7 @@ class QueryOut(BaseModel):
     label: str
     reasoning: str
     risk_category: str
+
+class ChatOut(BaseModel):
+    chunks: List[QueryOut]
+    response: str

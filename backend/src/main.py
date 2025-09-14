@@ -19,8 +19,8 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 from langchain_setup import test_neo4j_connection
-from models import QueryIn
-from retrieve import generate_initial_analysis, get_similar_chunks
+from models import ChatOut, QueryIn 
+from retrieve import generate_initial_analysis, get_similar_chunks, generate_rag_response
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -116,13 +116,11 @@ def query(q: QueryIn):
         retrieved_chunks = get_similar_chunks(q.query, k = 10)
         if not retrieved_chunks:
             return []
-
-        json_analysis = generate_initial_analysis(retrieved_chunks)
-
-        analysis_data = json.loads(json_analysis)
-
-        return analysis_data
-
+        
+        response = generate_rag_response(q.query, retrieved_chunks)
+        
+        return ChatOut(chunks= retrieved_chunks, response= response)
+        
     except json.JSONDecodeError as e:
         logger.error(f"Failed to parse analysis JSON from LLM: {e}")
         raise HTTPException(status_code=500, detail="Invalid JSON format from analysis")
