@@ -1,16 +1,18 @@
 import os
+import spacy
+from sentence_transformers import SentenceTransformer
 from pathlib import Path
 from dotenv import load_dotenv
 from neo4j import GraphDatabase   # ← Disabled for now
 from ollama import Client as OllamaClient  # ← NEW
-
-# LangChain imports
-# from langchain_community.embeddings import HuggingFaceEmbeddings  # optional for later
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Load .env from parent folder
 env_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=env_path)
+
+nlp = spacy.load("en_core_web_sm")
+embedding_model = SentenceTransformer("nlpaueb/legal-bert-small-uncased")
 
 # Read API key
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")

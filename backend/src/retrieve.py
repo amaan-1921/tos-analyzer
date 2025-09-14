@@ -4,7 +4,7 @@
 from typing import List, Dict
 import json
 
-from langchain_setup import driver, embeddings, llm
+from langchain_setup import driver, embedding_model, llm
 from models import QueryOut
 
 def get_similar_chunks(query_text: str, namespace: str, k: int = 5) -> List[Dict]:
@@ -24,8 +24,7 @@ def get_similar_chunks(query_text: str, namespace: str, k: int = 5) -> List[Dict
     """
 
     try:
-        query_embedding = embeddings.embed_query(query_text)
-        
+        query_embedding = embedding_model.encode(query_text,convert_to_numpy=True)
         with driver.session() as sessison:
             result = sessison.run(
                     """
@@ -41,7 +40,7 @@ def get_similar_chunks(query_text: str, namespace: str, k: int = 5) -> List[Dict
             )
 
             return [record.data() for record in result]
-    
+
     except Exception as e:
         print(f"Error during vector search: {e}")
         return []
@@ -52,7 +51,7 @@ def generate_rag_response(query_text: str, retrieved_chunks : List[Dict]) -> str
 
     Args:
         query_text (str): The user's query
-    
+
         retrieved_chunks (List[Dict]): Chunks returned from the vector search.
 
     Returns:
@@ -62,9 +61,9 @@ def generate_rag_response(query_text: str, retrieved_chunks : List[Dict]) -> str
     context = "\n".join([chunk["text"] for chunk in retrieved_chunks])
 
     prompt = f"""
-             You are a helpful assistant that answers questions about 
-             a Terms of Service document. Use only the provided context 
-             to answer the user's query. If the answer is not in the 
+             You are a helpful assistant that answers questions about
+             a Terms of Service document. Use only the provided context
+             to answer the user's query. If the answer is not in the
              context, state that you cannot answer the question.
 
             **Context:**
@@ -75,7 +74,7 @@ def generate_rag_response(query_text: str, retrieved_chunks : List[Dict]) -> str
 
             **Answer:**
             """
-    
+
     try:
         response = llm.invoke(prompt)
         return response.context

@@ -6,18 +6,13 @@ like embedding generation, and chunking.
 """
 
 from oopsies import PDFExtractionError, HTMLExtractionError, IngestionError
-from sentence_transformers import SentenceTransformer
+from langchain_setup import embedding_model,nlp
 import os
-import spacy
 import re
 from PyPDF2 import PdfReader
 from bs4 import BeautifulSoup
 from typing import List
 import uuid
-
-# Load spaCy model
-nlp = spacy.load("en_core_web_sm")
-embedding_model = SentenceTransformer("nlpaueb/legal-bert-small-uncased")
 
 def segment_clauses(text: str) -> List[str]:
     """
