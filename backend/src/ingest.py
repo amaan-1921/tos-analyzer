@@ -1,6 +1,7 @@
 """
 Ingestion Utility for uploaded documents
 """
+from langchain_setup import driver
 import json
 import uuid
 import re
@@ -148,17 +149,24 @@ def store_triples(triples: List[Tuple[str, str, str]], chunk_id: str):
                 chunk_id=chunk_id
             )
 
-
+def clear_neo4j():
+    """
+    Deletes all existing Chunk nodes, Entity nodes, and triples in the database.
+    """
+    with driver.session() as session:
+        session.run("MATCH (n) DETACH DELETE n")
 
 def ingest(filepath: str):
     """
     Full ingestion pipeline:
-    1. Load text
-    2. Chunk text
-    3. Generate embeddings
-    4. Store chunks in Neo4j
-    5. Extract triples and store in Neo4j
+    1. Clear Neo4j
+    2. Load text
+    3. Chunk text
+    4. Generate embeddings
+    5. Store chunks in Neo4j
+    6. Extract triples and store in Neo4j
     """
+    clear_neo4j()
     text = tp.load_text(filepath)
     chunks_list = tp.chunk_text_spacy(text)
     chunks = [item["chunk"] for item in chunks_list]
