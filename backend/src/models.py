@@ -11,7 +11,6 @@ from pydantic import BaseModel
 
 class QueryIn(BaseModel):
     query: str
-    namespace: str # which document/KG to query
 
 class QueryOut(BaseModel):
     clause_text: str
@@ -20,5 +19,5 @@ class QueryOut(BaseModel):
     risk_category: str
 
 class ChatOut(BaseModel):
-    chunks: List[QueryOut]
+    chunks: List[Dict]
     response: str
