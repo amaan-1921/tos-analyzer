@@ -128,26 +128,97 @@ def generate_initial_analysis(retrieved_chunks: List[Dict]) -> str:
     document_text = "\n\n".join(enriched_text)
 
     prompt = f"""
-You are a legal analyst specializing in consumer protection law. Your task is to review a Terms of Service document and identify clauses that are potentially unfair, disadvantageous, or risky for the user.
+You are a legal analyst specializing in consumer protection law.
+Your task is to review a Terms of Service (ToS) document and identify clauses that are potentially unfair, disadvantageous, or risky for the user.
 
-For each clause, you must:
-1. Analyze the clause's text.
-2. Identify the potential risk (Data & Privacy, Liability, Dispute Resolution, Unilateral Changes, Content & IP, Termination).
-3. Assign a label: Risky: <category>, Neutral, or Fair.
-4. Provide concise reasoning.
+Your Step-by-Step Task
 
-Document Text:
-"{document_text}"
+For each clause in the provided text:
 
-Return response as JSON array of objects:
+Understand the clause: Break down what the clause is saying in plain language.
+
+Assess its impact on the user.
+
+Classify its fairness level:
+
+"Risky: <category>" if it could harm or disadvantage the user.
+
+"Neutral" if it is standard/legal boilerplate but not harmful.
+
+"Fair" if it protects user rights or limits company power.
+
+Identify the risk category if labeled "Risky". Choose exactly one:
+
+Data & Privacy
+
+Liability
+
+Dispute Resolution
+
+Unilateral Changes
+
+Content & IP
+
+Termination
+
+Provide a concise explanation of why you labeled it that way.
+
+Output Format
+
+Return a valid JSON array where each item has:
+
 [
-  {{
-    "clause_text": "...",
-    "label": "...",
-    "reasoning": "...",
-    "risk_category": "..."
-  }}
+{
+"clause_text": "...",
+"label": "Risky: <category> | Neutral | Fair",
+"reasoning": "...",
+"risk_category": "<one of the categories or empty if Neutral/Fair>"
+}
 ]
+
+Few-Shot Examples
+
+Example 1
+Clause:
+"The Company may terminate your account at any time without notice."
+
+Output:
+{
+"clause_text": "The Company may terminate your account at any time without notice.",
+"label": "Risky: Termination",
+"reasoning": "This gives the company absolute power to end the user's account at any time without warning, leaving the user without recourse or explanation.",
+"risk_category": "Termination"
+}
+
+Example 2
+Clause:
+"All personal data collected will be shared with third-party advertisers and affiliates."
+
+Output:
+{
+"clause_text": "All personal data collected will be shared with third-party advertisers and affiliates.",
+"label": "Risky: Data & Privacy",
+"reasoning": "This clause allows broad data sharing without user consent, risking misuse and privacy violations.",
+"risk_category": "Data & Privacy"
+}
+
+Example 3
+Clause:
+"Users must be at least 18 years old to register."
+
+Output:
+{
+"clause_text": "Users must be at least 18 years old to register.",
+"label": "Neutral",
+"reasoning": "This is a standard eligibility requirement and does not disadvantage the user.",
+"risk_category": ""
+}
+
+Document to Analyze
+
+Now analyze the following Terms of Service text:    
+
+/"/"/"<insert document text here>/"/"/"
 """
     try:
         response = llm.invoke(prompt)
