@@ -1,17 +1,61 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Dict, Any
-import logging
-from .model_predictor import ToSModel
-from .text_processor import segment_clauses
+"""
+Main entry point for the FastAPI application.
 
+This module instantiates the FastAPI application, configures CORS middleware, manages uploads, and exposes
+all required endpoints with different functionalities that are required for the application.
+"""
+
+import logging
+import uuid
+import os
+import json
+import shutil
+
+from datetime import datetime
+from ingest import ingest as ingested
+
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
+
+from langchain_setup import test_neo4j_connection
+from models import ChatOut, QueryIn
+from retrieve import generate_initial_analysis, get_similar_chunks, generate_rag_response
+
+# Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+# Set the upload directory for the various ToS uploads
+UPLOAD_DIR = "./uploads"
 
-# Add CORS middleware first
+# -----------------------------
+# Lifespan handler
+# -----------------------------
+@asynccontextmanager
+async def check_neo4j(app: FastAPI):
+    """
+    Startup event to check connection to Neo4j database.
+    Calls the test_connection function from the langchain_setup script,
+    and prints the status to the container logs.
+    """
+    try:
+        test_neo4j_connection()
+        logger.info("✅ Neo4j connection established.")
+    except Exception as e:
+        logger.error(f"❌ Neo4j connection failed: {e}")
+    yield
+    # (You could close the driver here if you have a global driver instance)
+
+
+# -----------------------------
+# Instantiate FastAPI application
+# -----------------------------
+app = FastAPI(title="ToS-Analyser", version="0.0.1", lifespan=check_neo4j)
+
+# -----------------------------
+# CORS
+# -----------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
@@ -20,37 +64,66 @@ app.add_middleware(
     allow_headers=["Content-Type", "Accept"],
 )
 
-tos_model = ToSModel()
 
-class AnalyzeRequest(BaseModel):
-    text: str
-
-class ResultItem(BaseModel):
-    clause_number: int
-    text: str
-    label: str
-    explanation: str
-
-class AnalyzeResponse(BaseModel):
-    results: List[ResultItem]
-
-@app.post("/analyze", response_model=AnalyzeResponse)
-async def analyze_tos(request: AnalyzeRequest):
-    try:
-        text = request.text.rstrip('.')
-        clauses = segment_clauses(text)
-        if not clauses:
-            logger.info("No valid clauses found in input text")
-            return {"results": []}
-
-        logger.debug(f"Input text: {request.text}")
-        logger.debug(f"Split clauses: {clauses}")
-        results = tos_model.predict(clauses)
-        return {"results": results}
-    except Exception as e:
-        logger.error(f"Endpoint error: {str(e)}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
+# -----------------------------
+# Routes
+# -----------------------------
 @app.get("/")
-async def root():
-    return {"message": "Welcome to the ToS Analyzer API. Visit /docs for API documentation."}
+def get_root():
+    """
+    Root endpoint of the API.
+    Returns a simple dictionary with a greeting and the current time.
+    """
+    return {
+        "message": "Welcome to the ToS Analyzer API. Visit /docs for API documentation.",
+        "time": datetime.now().isoformat(),
+    }
+
+
+@app.post("/ingest")
+def ingest(file: UploadFile = File(...)):
+    """
+    Ingestion endpoint of the API.
+    Uploads a document, assigns it a unique identifier, and saves it.
+    """
+
+    doc_id = str(uuid.uuid4())
+    try:
+        ext = os.path.splitext(file.filename)[1]  # type: ignore
+        dest = os.path.join(UPLOAD_DIR, f"{doc_id}{ext}")
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        with open(dest, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        logger.info(f"File {file.filename} saved as {dest}")
+        json_analysis = ingested(dest)
+        analysis_data = json.loads(json_analysis)
+        return analysis_data
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to decode JSON: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.error(f"Failed to ingest file: {e}")
+        raise HTTPException(status_code=422, detail=str(e))
+
+@app.post("/query")
+def query(q: QueryIn):
+    """
+    Querying endpoint of the RAG API.
+    This endpoint queries the LLM, which uses RAG to give accurate answers.
+    """
+    try:
+        retrieved_chunks = get_similar_chunks(q.query, k = 10)
+        if not retrieved_chunks:
+            return []
+
+        response = generate_rag_response(q.query, retrieved_chunks)
+
+        return ChatOut(chunks= retrieved_chunks, response= response)
+
+    except json.JSONDecodeError as e:
+        logger.error(f"Failed to parse analysis JSON from LLM: {e}")
+        raise HTTPException(status_code=500, detail="Invalid JSON format from analysis")
+    except Exception as e:
+        logger.error(f"Query failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
