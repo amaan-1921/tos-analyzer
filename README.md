@@ -1,102 +1,38 @@
-# ToS Analyzer
+# Terms and Conditions Risk Analyzer  
 
-A privacy-focused tool that analyzes Terms of Service (ToS) documents to detect risky, unfair, or benign clauses using a locally-hosted language model (e.g., Mistral via LM Studio). Built with React and FastAPI, this project helps users understand potential threats in ToS agreements.
+An AI-powered web application that detects potential risks and unfair clauses in Terms & Conditions and Privacy Policy documents using Large Language Models (LLMs) and Knowledge Graphs.  
 
-This project is under active development. Future improvements include enhancing detection accuracy, refining the user interface, and deploying a public version.
+---
 
-## Project Structure
+## Overview  
+The Terms and Conditions Risk Analyzer enhances user awareness by analyzing complex legal documents and highlighting clauses that may affect user rights.  
+It leverages LangChain, Neo4j, and Retrieval-Augmented Generation (RAG) to detect and explain risky clauses through an interactive interface.
 
-```plaintext
-tos-analyzer/
-  ├── backend/
-  │   ├── src/
-  │   │   ├── main.py
-  │   │   ├── model_predictor.py
-  │   │   ├── text_processor.py
-  │   │   └── requirements.txt
-      └── ...
-  ├── frontend/
-  │   ├── public/
-  │   ├── src/
-          └── ...
-  │   ├── package.json
-  │   └── vite.config.js
-      └── ...
-```
-## Getting Started
+---
 
-### 1. Clone the Repository
+## Key Features  
+- Multi-format document ingestion (text, PDF, DOCX)  
+- Neo4j-based knowledge graph for entity and clause relationship mapping  
+- RAG-based clause analysis using DeepSeek-R1 (7B) and Legal-BERT embeddings  
+- Interactive chat interface for document exploration  
+- Full-stack architecture with FastAPI (backend) and React + Tailwind CSS (frontend)  
+- Ongoing improvements including multi-LLM integration, UI/UX enhancements, and performance optimization  
 
-git clone https://github.com/amaan-1921/tos-analyzer.git
-cd tos-analyzer
+---
 
-### 2. Backend Setup (FastAPI)
+## Tech Stack  
+**Frontend:** React, Tailwind CSS  
+**Backend:** Python, FastAPI, LangChain  
+**Database:** Neo4j  
+**Models:** DeepSeek-R1 (7B), Legal-BERT  
+**Architecture:** Retrieval-Augmented Generation (RAG)
 
-Ensure Python 3.10+ is installed.
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate    # or `venv\Scripts\activate` on Windows
-pip install -r requirements.txt
-```
+---
 
-Start the FastAPI server:
-```bash
-uvicorn src.main:app --reload
-```
-### 3. LM Studio Setup (for local LLM)
-
-
-1. Download and install LM Studio.
-2. Load a compatible model (e.g., mistral-7b-instruct-v0.2 GGUF).
-3. Enable the "OpenAI-Compatible API Server".
-4. Confirm the server is running at http://127.0.0.1:1234.
-
-### 4. Frontend Setup (React + Tailwind + Vite)
-```bash
-cd ../frontend
-npm install
-npm run dev
-```
-Visit http://localhost:5173 in your browser.
-
-## Features
-
-
-- Detects risky, unfair, or benign clauses in ToS documents.
-
-- Uses a local language model via LM Studio for privacy.
-
-- Supports text input and file upload (.txt).
-
-- Built with React and Tailwind CSS for a clean user interface.
-
-- Modular backend with FastAPI for scalability.
-
-## Tech Stack
-
-- Frontend: React, Vite, Tailwind CSS
-
-- Backend: FastAPI, Python
-
-- AI Model: Mistral (via LM Studio)
-
-## Contributors
-
-- Ansul Kumar
-
-- Mohammed Amaan Thayyil
-
-
-
-> Note: This is a research/educational project. The analysis provided is not legal advice.
-
-## Future Plans
-
-- Add support for PDF uploads.
-
-- Containerize the application with Docker.
-
-- Improve clause grouping and analysis accuracy.
-
-- Deploy a hosted version (e.g., Vercel, Render, or Fly.io).
+## System Architecture  
+```text
+Document Input → Preprocessing → Clause Extraction → Embedding (DeepSeek-R1 + Legal-BERT)
+      ↓
+Neo4j Knowledge Graph ←→ RAG Pipeline ←→ LangChain
+      ↓
+Frontend (React + Tailwind) → Chat-based Exploration Interface
