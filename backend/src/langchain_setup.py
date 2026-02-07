@@ -40,7 +40,7 @@ def test_neo4j_connection():
 # )
 
 class LocalLLM:
-    def __init__(self, model_name="deepseek-r1:7b"):
+    def __init__(self, model_name="qwen2.5:1.5b"):
         self.client = OllamaClient()
         self.model_name = model_name
 
@@ -51,7 +51,7 @@ class LocalLLM:
         r.content = response['response'] #type:ignore
         return r
 
-llm = LocalLLM(model_name="deepseek-r1:7b")
+llm = LocalLLM(model_name="qwen2.5:1.5b")
 
 
 if __name__ == "__main__":

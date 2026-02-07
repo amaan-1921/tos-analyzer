@@ -7,6 +7,7 @@ import uuid
 import re
 from typing import List, Tuple
 import logging
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from retrieve import generate_initial_analysis
 import spacy
@@ -170,7 +171,23 @@ def ingest(filepath: str):
     4. Generate embeddings
     5. Store chunks in Neo4j
     6. Extract triples and store in Neo4j
+    7. Cache analysis result
     """
+    import os
+    import hashlib
+    
+    # Generate hash of file content for caching
+    with open(filepath, 'rb') as f:
+        file_hash = hashlib.md5(f.read()).hexdigest()
+    
+    cache_file = filepath + f".analysis_{file_hash}.json"
+    
+    # Check if cached analysis exists
+    if os.path.exists(cache_file):
+        logger.info(f"Using cached analysis for {filepath}")
+        with open(cache_file, 'r', encoding='utf-8') as f:
+            return f.read()
+    
     clear_neo4j()
     text = tp.load_text(filepath)
     chunks_list = tp.chunk_text_spacy(text)
@@ -180,11 +197,29 @@ def ingest(filepath: str):
     # Store chunks & get IDs
     chunk_ids = store_chunks_in_neo4j(chunks, embeddings)
 
-    for chunk, chunk_id in zip(chunks_list, chunk_ids):
-        chunk_text = chunk["chunk"]
-        triples = extract_triples_from_chunk(chunk_text)
-        store_triples(triples, chunk_id)
-
+    # Parallel triple extraction
+    logger.info(f"Extracting triples from {len(chunks_list)} chunks in parallel...")
+    chunk_triples = {}
+    
+    def extract_and_store(chunk_item, chunk_id):
+        try:
+            chunk_text = chunk_item["chunk"]
+            triples = extract_triples_from_chunk(chunk_text)
+            return chunk_id, triples
+        except Exception as e:
+            logger.error(f"Error extracting triples for chunk {chunk_id}: {e}")
+            return chunk_id, []
+    
+    # Use ThreadPoolExecutor with max 3 workers to avoid overwhelming the LLM
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {executor.submit(extract_and_store, chunk, cid): cid 
+                   for chunk, cid in zip(chunks_list, chunk_ids)}
+        
+        for future in as_completed(futures):
+            chunk_id, triples = future.result()
+            if triples:
+                store_triples(triples, chunk_id)
+    
     logger.info(f"Ingestion Complete for {filepath}")
 
     # --- Fetch all chunks from Neo4j ---
@@ -200,4 +235,9 @@ def ingest(filepath: str):
     # --- Run initial analysis ---
     analysis_json = generate_initial_analysis(chunk_dicts)
     logger.info(f"Initial Analysis Complete for {filepath}")
+    
+    # Cache the analysis result
+    with open(cache_file, 'w', encoding='utf-8') as f:
+        f.write(analysis_json)
+    
     return analysis_json

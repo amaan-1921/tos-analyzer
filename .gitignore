@@ -1,0 +1,90 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+.python-version
+.pyvenv.cfg
+
+# IDE/editor config
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs and debug
+*.log
+logs/
+*.log.*
+
+# Sensitive files
+.env
+secrets/
+*.key
+*.pem
+*.cert
+config.ini
+credentials.json
+
+# Testing / coverage
+.coverage
+coverage.xml
+.pytest_cache/
+htmlcov/
+
+# Temp/backup
+*.swp
+*.bak
+*~
+google_api_key.txt
+config.py
+
+uploads/
+
+# Frontend / Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dist/
+build/
+.env.local
+.env.*.local
+.cache/
+*.tgz
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Python build and packaging
+*.egg
+*.egg-info/
+
+# IPython/Jupyter
+.ipynb_checkpoints/
+.jupyter/
+.ipython/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# LLM/Vector Database caches
+.chroma/
+.langchain/
+*.index/
+chromadb/

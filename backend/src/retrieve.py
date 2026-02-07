@@ -56,7 +56,7 @@ def generate_rag_response(query_text: str, retrieved_chunks: List[Dict]) -> str:
 
     with driver.session() as session:
         for chunk in retrieved_chunks:
-            chunk_text = chunk["text"]
+            chunk_text = chunk["text"] or ""
             chunk_id = chunk["chunk_id"]
 
             # Fetch triples linked to this chunk
@@ -150,15 +150,10 @@ Classify its fairness level:
 Identify the risk category if labeled "Risky". Choose exactly one:
 
 Data & Privacy
-
 Liability
-
 Dispute Resolution
-
 Unilateral Changes
-
 Content & IP
-
 Termination
 
 Provide a concise explanation of why you labeled it that way.
@@ -168,12 +163,12 @@ Output Format
 Return a valid JSON array where each item has:
 
 [
-{
+{{
 "clause_text": "...",
 "label": "Risky: <category> | Neutral | Fair",
 "reasoning": "...",
 "risk_category": "<one of the categories or empty if Neutral/Fair>"
-}
+}}
 ]
 
 Few-Shot Examples
@@ -183,36 +178,36 @@ Clause:
 "The Company may terminate your account at any time without notice."
 
 Output:
-{
+{{
 "clause_text": "The Company may terminate your account at any time without notice.",
 "label": "Risky: Termination",
 "reasoning": "This gives the company absolute power to end the user's account at any time without warning, leaving the user without recourse or explanation.",
 "risk_category": "Termination"
-}
+}}
 
 Example 2
 Clause:
 "All personal data collected will be shared with third-party advertisers and affiliates."
 
 Output:
-{
+{{
 "clause_text": "All personal data collected will be shared with third-party advertisers and affiliates.",
 "label": "Risky: Data & Privacy",
 "reasoning": "This clause allows broad data sharing without user consent, risking misuse and privacy violations.",
 "risk_category": "Data & Privacy"
-}
+}}
 
 Example 3
 Clause:
 "Users must be at least 18 years old to register."
 
 Output:
-{
+{{
 "clause_text": "Users must be at least 18 years old to register.",
 "label": "Neutral",
 "reasoning": "This is a standard eligibility requirement and does not disadvantage the user.",
 "risk_category": ""
-}
+}}
 
 Document to Analyze
 
@@ -232,7 +227,7 @@ Now analyze the following Terms of Service text:
 
         if not objects:
             # No valid JSON objects found
-            return json.dumps({"error": "No clauses found"})
+            return json.dumps([{"clause_text": "No clauses could be extracted", "label": "Neutral", "reasoning": "The analysis did not identify any specific clauses", "risk_category": ""}])
 
         # Join all objects into one JSON array
         json_array = "[" + ",".join(objects) + "]"
@@ -246,4 +241,4 @@ Now analyze the following Terms of Service text:
 
     except Exception as e:
         print(f"Error invoking LLM for initial analysis: {e}")
-        return json.dumps({"error": "Failed to generate analysis"})
+        return json.dumps([{"clause_text": "Error during analysis", "label": "Error", "reasoning": str(e), "risk_category": ""}])
