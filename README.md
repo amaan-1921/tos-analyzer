@@ -92,7 +92,7 @@ docker compose up -d neo4j
 ### 4. Create Neo4j Vector Index (One-Time Setup)
 **Run this command once after starting Neo4j for the first time:**
 ```bash
-docker exec tos-neo4j cypher-shell -u neo4j -p strongpasswd "DROP INDEX chunk_embeddings IF EXISTS; CREATE VECTOR INDEX chunk_embeddings IF NOT EXISTS FOR (c:Chunk) ON(c.embedding) OPTIONS { indexConfig: {\`vector.dimensions\`: 512, \`vector.similarity_function\`: 'cosine'} };"
+docker exec tos-neo4j cypher-shell -u neo4j -p strongpasswd "DROP INDEX chunk_embeddings IF EXISTS; CREATE VECTOR INDEX chunk_embeddings IF NOT EXISTS FOR (c:Chunk) ON (c.embedding) OPTIONS {indexConfig: {``vector.dimensions``: 512, ``vector.similarity_function``: 'cosine'}};"
 ```
 
 **Note:** This index persists in the Neo4j volume. You only need to re-run this if you:

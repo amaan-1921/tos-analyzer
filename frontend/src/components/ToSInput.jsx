@@ -3,7 +3,56 @@ import { useResults } from './ResultsContext';
 
 function ToSInput() {
     const [file, setFile] = useState(null);
+    const [progress, setProgress] = useState(0);
+    const [estimatedTime, setEstimatedTime] = useState(null);
+    const [progressMessage, setProgressMessage] = useState('');
+    const [useCloud, setUseCloud] = useState(false); // Privacy-first default
+    const [showDetails, setShowDetails] = useState(false);
     const { setResults, setIsLoading, isLoading, setError, setHasAnalysisResults } = useResults();
+
+    const pollAnalysisProgress = async (docId, estimatedSeconds) => {
+        const startTime = Date.now();
+        const pollInterval = setInterval(async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/analysis/${docId}`);
+                if (!response.ok) throw new Error('Failed to fetch progress');
+                
+                const data = await response.json();
+                
+                // Calculate progress based on elapsed time and estimated time
+                const elapsedSeconds = (Date.now() - startTime) / 1000;
+                const estimatedProgress = Math.min((elapsedSeconds / estimatedSeconds) * 100, 95);
+                
+                setProgress(Math.max(data.progress, estimatedProgress));
+                setProgressMessage(data.message);
+                
+                if (data.status === 'completed') {
+                    clearInterval(pollInterval);
+                    setProgress(100);
+                    setProgressMessage('Analysis complete!');
+                    setResults(data.result || []);
+                    setHasAnalysisResults(true);
+                    setIsLoading(false);
+                    
+                    // Keep final state visible for a moment
+                    setTimeout(() => {
+                        setProgress(0);
+                        setEstimatedTime(null);
+                        setProgressMessage('');
+                    }, 2000);
+                } else if (data.status === 'failed') {
+                    clearInterval(pollInterval);
+                    setError(`Analysis failed: ${data.message}`);
+                    setIsLoading(false);
+                    setProgress(0);
+                    setEstimatedTime(null);
+                    setProgressMessage('');
+                }
+            } catch (err) {
+                console.error('Poll error:', err);
+            }
+        }, 500); // Poll every 500ms
+    };
 
     const handleAnalyze = async () => {
         if (!file) {
@@ -14,10 +63,13 @@ function ToSInput() {
         setIsLoading(true);
         setError(null);
         setHasAnalysisResults(false);
+        setProgress(0);
+        setProgressMessage('Initializing...');
 
         try {
             const formData = new FormData();
             formData.append('file', file);
+            formData.append('use_cloud', useCloud);
 
             const response = await fetch('http://localhost:8000/ingest', {
                 method: 'POST',
@@ -29,14 +81,22 @@ function ToSInput() {
             }
             
             const data = await response.json();
-            setResults(data || []);
-            setHasAnalysisResults(true);
+            const docId = data.doc_id;
+            const estimatedSeconds = data.estimated_time;
+            
+            setEstimatedTime(estimatedSeconds);
+            setProgress(10);
+            setProgressMessage(data.message);
+            
+            // Start polling for progress
+            pollAnalysisProgress(docId, estimatedSeconds);
         } catch (err) {
-            setError(`Failed to analyze ToS: ${err.message}`);
+            setError(`Failed to start analysis: ${err.message}`);
             setResults([]);
             setHasAnalysisResults(false);
-        } finally {
             setIsLoading(false);
+            setProgress(0);
+            setProgressMessage('');
         }
     };
 
@@ -48,6 +108,8 @@ function ToSInput() {
             setResults([]);
             setHasAnalysisResults(false);
             setError(null);
+            setProgress(0);
+            setProgressMessage('');
         }
     };
 
@@ -56,6 +118,8 @@ function ToSInput() {
         setResults([]);
         setHasAnalysisResults(false);
         setError(null);
+        setProgress(0);
+        setProgressMessage('');
         // Reset the file input
         const fileInput = document.getElementById('tos-file');
         if (fileInput) {
@@ -66,6 +130,105 @@ function ToSInput() {
     return (
         <div className="w-full max-w-2xl mx-auto text-center">
             <div className="flex flex-col items-center space-y-4">
+                {/* Processing Mode Selection */}
+                <div className="w-full max-w-md bg-gray-800/40 border border-gray-700/50 rounded-xl p-4 backdrop-blur-sm">
+                    <div className="flex items-center justify-between mb-2">
+                        <span className="text-gray-200 font-medium">Processing Mode</span>
+                        <button
+                            onClick={() => setShowDetails(!showDetails)}
+                            className="text-xs text-teal-400 hover:text-teal-300 transition-colors flex items-center space-x-1"
+                        >
+                            <span>{showDetails ? 'Hide' : 'View'} Details</span>
+                            <svg 
+                                className={`w-4 h-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    {/* Toggle Switch */}
+                    <div className="flex items-center justify-center space-x-3 py-2">
+                        <span className={`text-sm ${!useCloud ? 'text-teal-400 font-semibold' : 'text-gray-400'}`}>
+                            Local
+                        </span>
+                        <button
+                            onClick={() => setUseCloud(!useCloud)}
+                            disabled={isLoading}
+                            className={`relative w-14 h-7 rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                                useCloud ? 'bg-blue-500' : 'bg-teal-500'
+                            } ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                        >
+                            <span
+                                className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full transition-transform duration-300 ${
+                                    useCloud ? 'translate-x-7' : 'translate-x-0'
+                                }`}
+                            />
+                        </button>
+                        <span className={`text-sm ${useCloud ? 'text-blue-400 font-semibold' : 'text-gray-400'}`}>
+                            Cloud
+                        </span>
+                    </div>
+
+                    {/* Details Section */}
+                    {showDetails && (
+                        <div className="mt-3 pt-3 border-t border-gray-700/50 space-y-3 text-left">
+                            {/* Local Mode */}
+                            <div className={`p-3 rounded-lg border transition-all ${
+                                !useCloud ? 'bg-teal-500/10 border-teal-500/30' : 'bg-gray-800/20 border-gray-700/30'
+                            }`}>
+                                <h4 className="text-sm font-semibold text-teal-400 mb-2">🔒 Local Mode</h4>
+                                <div className="space-y-1 text-xs">
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-gray-300">100% Private (never leaves your device)</span>
+                                    </div>
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-gray-300">Completely Free</span>
+                                    </div>
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-yellow-400 mt-0.5">⚠</span>
+                                        <span className="text-gray-400">Longer processing time</span>
+                                    </div>
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-gray-500 mt-0.5">•</span>
+                                        <span className="text-gray-500">Uses local Ollama models</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Cloud Mode */}
+                            <div className={`p-3 rounded-lg border transition-all ${
+                                useCloud ? 'bg-blue-500/10 border-blue-500/30' : 'bg-gray-800/20 border-gray-700/30'
+                            }`}>
+                                <h4 className="text-sm font-semibold text-blue-400 mb-2">☁️ Cloud Mode</h4>
+                                <div className="space-y-1 text-xs">
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-gray-300">Much faster processing</span>
+                                    </div>
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-gray-300">Free tier (Groq API)</span>
+                                    </div>
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-yellow-400 mt-0.5">⚠</span>
+                                        <span className="text-gray-400">ToS data shared with Groq</span>
+                                    </div>
+                                    <div className="flex items-start space-x-2">
+                                        <span className="text-yellow-400 mt-0.5">⚠</span>
+                                        <span className="text-gray-400">Rate limits apply (batch processing)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 <label
                     htmlFor="tos-file"
                     className="group px-8 py-4 bg-gray-800/50 hover:bg-gray-700/50 text-gray-200 font-semibold border-2 border-gray-600/50 hover:border-teal-500/50 rounded-xl transition-all duration-300 cursor-pointer flex items-center space-x-3 backdrop-blur-sm transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -93,6 +256,7 @@ function ToSInput() {
                     accept=".txt,.pdf,.html,.htm"
                     className="hidden"
                     onChange={handleFileChange}
+                    disabled={isLoading}
                 />
                 
                 <button
@@ -118,9 +282,32 @@ function ToSInput() {
                         </>
                     )}
                 </button>
+
+                {/* Progress Bar and Info */}
+                {isLoading && (
+                    <div className="w-full max-w-md space-y-3">
+                        <div className="bg-gray-800/40 p-4 rounded-lg border border-gray-700/50">
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm text-gray-300">{progressMessage}</span>
+                                <span className="text-sm font-semibold text-teal-400">{Math.round(progress)}%</span>
+                            </div>
+                            <div className="w-full bg-gray-700/50 rounded-full h-2 overflow-hidden border border-gray-600/30">
+                                <div
+                                    className="bg-gradient-to-r from-teal-500 to-blue-500 h-full transition-all duration-300 ease-out"
+                                    style={{ width: `${progress}%` }}
+                                ></div>
+                            </div>
+                            {estimatedTime && (
+                                <p className="text-xs text-gray-400 mt-2">
+                                    Estimated time: {estimatedTime} seconds
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
             
-            {file && (
+            {file && !isLoading && (
                 <div className="relative group text-gray-300 text-sm mt-4 bg-gray-800/30 px-4 py-3 rounded-lg mx-auto max-w-md cursor-pointer transition-all duration-200 hover:bg-gray-800/40">
                     <div className="text-center">
                         <span className="text-gray-400">Selected: </span>

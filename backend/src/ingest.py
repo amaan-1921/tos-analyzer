@@ -1,17 +1,17 @@
 """
 Ingestion Utility for uploaded documents
 """
-from langchain_setup import driver
+from langchain_setup import driver, get_llm_models
 import json
 import uuid
 import re
 from typing import List, Tuple
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 
 from retrieve import generate_initial_analysis
 import spacy
-from langchain_setup import driver, llm
 import text_processor as tp
 
 nlp = spacy.load("en_core_web_sm")
@@ -54,9 +54,13 @@ def sanitize_relation_name(rel: str) -> str:
     return rel
 
 
-def extract_triples_from_chunk(chunk_text: str) -> List[Tuple[str, str, str]]:
+def extract_triples_from_chunk(chunk_text: str, llm_model) -> List[Tuple[str, str, str]]:
     """
-    Generate subject-relation-object triples from text using the LLM.
+    Generate subject-relation-object triples from text using the provided LLM.
+    
+    Args:
+        chunk_text: The text chunk to extract triples from
+        llm_model: The LLM instance to use (LocalLLM or GroqLLM)
     """
     prompt = f"""
 You are an information extraction system specialized in Terms of Service.
@@ -110,7 +114,7 @@ Output:
 Now extract triples from this text:
 \"\"\"{chunk_text}\"\"\"
 """
-    response = llm.invoke(prompt)
+    response = llm_model.invoke(prompt)  # Use provided model
     text_out = response.content if isinstance(response.content, str) else str(response.content) #type:ignore
     triples: List[Tuple[str, str, str]] = []
 
@@ -162,7 +166,7 @@ def clear_neo4j():
     with driver.session() as session:
         session.run("MATCH (n) DETACH DELETE n")
 
-def ingest(filepath: str):
+def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_state: dict = None):
     """
     Full ingestion pipeline:
     1. Clear Neo4j
@@ -170,11 +174,22 @@ def ingest(filepath: str):
     3. Chunk text
     4. Generate embeddings
     5. Store chunks in Neo4j
-    6. Extract triples and store in Neo4j
-    7. Cache analysis result
+    6. Extract triples and store in Neo4j (with batching if cloud)
+    7. Run analysis and cache result
+    
+    Args:
+        filepath: Path to document file
+        use_cloud: If True, use cloud API with batching. If False, use local LLM.
+        doc_id: Document ID for progress tracking (optional)
+        analysis_state: Global analysis state dict for progress updates (optional)
     """
     import os
     import hashlib
+    import time
+    
+    # Get appropriate LLM models based on user choice
+    llm_fast, llm = get_llm_models(use_cloud)
+    logger.info(f"Using {'cloud' if use_cloud else 'local'} models for processing")
     
     # Generate hash of file content for caching
     with open(filepath, 'rb') as f:
@@ -197,28 +212,66 @@ def ingest(filepath: str):
     # Store chunks & get IDs
     chunk_ids = store_chunks_in_neo4j(chunks, embeddings)
 
-    # Parallel triple extraction
-    logger.info(f"Extracting triples from {len(chunks_list)} chunks in parallel...")
+    # Parallel triple extraction with optional batching for cloud rate limits
+    logger.info(f"Extracting triples from {len(chunks_list)} chunks ({'cloud with batching' if use_cloud else 'local parallel'})...")
     chunk_triples = {}
+    total_chunks = len(chunks_list)
+    chunks_processed = 0
     
     def extract_and_store(chunk_item, chunk_id):
+        nonlocal chunks_processed
         try:
             chunk_text = chunk_item["chunk"]
-            triples = extract_triples_from_chunk(chunk_text)
+            triples = extract_triples_from_chunk(chunk_text, llm_fast)  # Pass LLM model
+            chunks_processed += 1
+            # Update progress: 30-70% for triple extraction
+            if doc_id and analysis_state and doc_id in analysis_state:
+                progress = 30 + int((chunks_processed / total_chunks) * 40)
+                analysis_state[doc_id]["progress"] = min(progress, 70)
+                analysis_state[doc_id]["message"] = f"Extracting triples: {chunks_processed}/{total_chunks} chunks"
             return chunk_id, triples
         except Exception as e:
             logger.error(f"Error extracting triples for chunk {chunk_id}: {e}")
+            chunks_processed += 1
             return chunk_id, []
     
-    # Use ThreadPoolExecutor with max 3 workers to avoid overwhelming the LLM
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = {executor.submit(extract_and_store, chunk, cid): cid 
-                   for chunk, cid in zip(chunks_list, chunk_ids)}
-        
-        for future in as_completed(futures):
-            chunk_id, triples = future.result()
-            if triples:
-                store_triples(triples, chunk_id)
+    if use_cloud:
+        # Cloud mode: Batch processing to respect rate limits (25 requests/batch, 60s pause)
+        BATCH_SIZE = 25
+        total_batches = (len(chunks_list) + BATCH_SIZE - 1) // BATCH_SIZE
+        for batch_num, i in enumerate(range(0, len(chunks_list), BATCH_SIZE)):
+            batch_chunks = chunks_list[i:i + BATCH_SIZE]
+            batch_ids = chunk_ids[i:i + BATCH_SIZE]
+            
+            logger.info(f"Processing batch {batch_num + 1}/{total_batches}")
+            if doc_id and analysis_state and doc_id in analysis_state:
+                analysis_state[doc_id]["message"] = f"Processing batch {batch_num + 1}/{total_batches}..."
+            
+            with ThreadPoolExecutor(max_workers=10) as executor:
+                futures = {executor.submit(extract_and_store, chunk, cid): cid 
+                           for chunk, cid in zip(batch_chunks, batch_ids)}
+                
+                for future in as_completed(futures):
+                    chunk_id, triples = future.result()
+                    if triples:
+                        store_triples(triples, chunk_id)
+            
+            # Pause between batches if there are more batches (rate limit safety)
+            if i + BATCH_SIZE < len(chunks_list):
+                logger.info("Pausing 60s to respect API rate limits...")
+                if doc_id and analysis_state and doc_id in analysis_state:
+                    analysis_state[doc_id]["message"] = f"Rate limit pause (batch {batch_num + 1}/{total_batches})..."
+                time.sleep(60)
+    else:
+        # Local mode: Aggressive parallel processing (no rate limits)
+        with ThreadPoolExecutor(max_workers=16) as executor:
+            futures = {executor.submit(extract_and_store, chunk, cid): cid 
+                       for chunk, cid in zip(chunks_list, chunk_ids)}
+            
+            for future in as_completed(futures):
+                chunk_id, triples = future.result()
+                if triples:
+                    store_triples(triples, chunk_id)
     
     logger.info(f"Ingestion Complete for {filepath}")
 
@@ -231,13 +284,26 @@ def ingest(filepath: str):
             """
         )
         chunk_dicts = [record.data() for record in result]
+    
+    logger.info(f"Retrieved {len(chunk_dicts)} chunks from Neo4j for analysis")
+    print(f"\nDEBUG: Retrieved {len(chunk_dicts)} chunks from Neo4j")
+    if chunk_dicts:
+        print(f"First chunk preview: {chunk_dicts[0]['text'][:100]}")
 
-    # --- Run initial analysis ---
-    analysis_json = generate_initial_analysis(chunk_dicts)
+    # --- Run initial analysis with appropriate LLM ---
+    if doc_id and analysis_state and doc_id in analysis_state:
+        analysis_state[doc_id]["progress"] = 75
+        analysis_state[doc_id]["message"] = "Running LLM analysis..."
+    
+    analysis_json = generate_initial_analysis(chunk_dicts, llm)
     logger.info(f"Initial Analysis Complete for {filepath}")
     
     # Cache the analysis result
     with open(cache_file, 'w', encoding='utf-8') as f:
         f.write(analysis_json)
+    
+    if doc_id and analysis_state and doc_id in analysis_state:
+        analysis_state[doc_id]["progress"] = 90
+        analysis_state[doc_id]["message"] = "Finalizing results..."
     
     return analysis_json
