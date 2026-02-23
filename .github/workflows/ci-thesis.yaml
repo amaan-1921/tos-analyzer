@@ -1,0 +1,36 @@
+name: Publish PDF
+
+on:
+  push:
+    branches: [ "thesis" ]
+    paths: 
+      - "thesis/src/**"
+
+  pull_request:
+    branches: [ "thesis" ]
+
+permissions:
+  contents: write
+
+jobs:
+  publish-pdf:
+    name: Compile, Generate, & Publish PDF
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Latex SetUp
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: ProjectReport.tex
+          working_directory: thesis/src
+
+      - name: Publish
+        run: |
+          gh release create "Thesis_v${{ github.run_number }}" \
+          thesis/src/ProjectReport.pdf --title "Thesis Build ${{ github.run_number }}" \
+          --notes "Automated build from thesis branch ${{ github.ref_name }} "
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
