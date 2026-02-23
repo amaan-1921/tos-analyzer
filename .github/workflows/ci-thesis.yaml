@@ -30,7 +30,7 @@ jobs:
       - name: Publish
         run: |
           gh release create "Thesis_v${{ github.run_number }}" \
-          thesis/src/ProjectReport.pdf --title "Thesis Build ${{ github.run_number }}" \
+          thesis/src/ProjectReport.pdf --title "Thesis_v${{ github.run_number }}" \
           --notes "Automated build from thesis branch ${{ github.ref_name }} "
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
