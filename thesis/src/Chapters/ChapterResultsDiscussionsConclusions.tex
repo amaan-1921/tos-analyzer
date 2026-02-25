@@ -1,96 +1,288 @@
 \chapter{RESULTS, DISCUSSIONS AND CONCLUSIONS} % Main chapter title
-\label{ChapterResults} % For referencing the chapter elsewhere, use \ref{Chapter1} 
-
-Here, the results of the project work (literature survey and review along with actual work) shall be listed and discussed in detail with appropriate arguments (result analysis) leading to logical conclusions. The list of conclusions should sync with the project objectives. The scope for future research and development in the field of the current project work must also be included in this chapter.  \\
-
-All the sections are mandatory for all projects. 
+\label{ChapterResults} % For referencing the chapter elsewhere, use
+% \ref{Chapter1}
 
 \section{Results \& Analysis}
+A series of case-based experiments based on Terms of Service
+documents gathered from various online platforms were used to assess
+the RiskWise system. Using its hybrid pipeline, the system processed
+the uploaded documents to create knowledge graphs, produce semantic
+representations, and provide risk-informed insights based on the
+contextual evidence gathered. Based on observations from the system
+implementation and experimentation as well as the synthesis of the
+literature, the results are discussed.
 
+\subsection{Findings of Literature Survey}
+The literature survey conducted as a part of this study has been very
+informative in understanding the status of automated contract
+analysis and research in legal AI. The following points have been
+raised based on the studies surveyed:
+\begin{itemize}
+  \item The current state of unfair clause detection is based on
+    classification models analyzing clauses independently.
+  \item Most AI-based contract analysis tools lack contextual models
+    that understand the relationships between clauses.
+  \item Lack of explainability is a problem, and most tools are able
+    to detect risks but lack the ability to explain their reasoning.
+  \item The traditional Retrieval-Augmented Generation model analyzes
+    text in a flat structure, which can lead to the loss of
+    contextual information.
+  \item Most tools are designed for legal professionals and not end-users.
+\end{itemize}
+Analysis:
+The literature survey conducted emphasizes the need for a system that
+bridges the gap between automated clause detection and user-friendly
+explainable analysis. The RiskWise framework fills this gap by
+incorporating hybrid retrieval based on semantic similarity and
+relational reasoning.
+
+\subsection{Results of System Implementation}
+
+\subsection*{Contextual Retrieval Performance}
+\begin{itemize}
+  \item The segmentation of the uploaded documents was done into
+    semantically significant chunks.
+  \item Vector space representation made it easier to retrieve
+    similar clauses based on similarity.
+  \item Traversal of the knowledge graph helped to expose
+    contractually relevant information.
+  \item Hybrid retrieval combined the results to create contextual evidence.
+\end{itemize}
+Result: Improved contextual completeness and efficient retrieval of
+distributed contractual provisions.
+
+\subsection*{Risk Detection and Explanation Quality}
+The ToS risk identification system was tested using example ToS
+documents to determine the functionality of the system in identifying
+risks associated with typical ToS documents.
+\begin{itemize}
+  \item Unilateral modification clause identification
+  \item Liability limitation clause identification
+  \item Data usage and privacy permissions identification
+  \item Termination and service restriction clause extraction
+\end{itemize}
+The explanations provided were tested for their relevance and interpretability.
+Result: Risky clauses were successfully extracted along with relevant
+explanations.
+
+\subsection*{Interactive Querying Performance}
+The conversational interface was tested to determine the capabilities
+of user interaction and exploration of context.
+\begin{itemize}
+  \item Users were able to ask follow-up questions about risks identified.
+  \item Contextual evidence retrieved supported informed response.
+  \item Responses were still relevant to document content despite turns in
+    interaction.
+\end{itemize}
+Result: Successful exploration of contractual risks using the
+conversational interface while still grounded in context.
+
+\subsection{Overall Observation}
+The combined results demonstrate that the RiskWise system
+successfully transforms complex legal agreements into structured
+representations and interpretable insights. The hybrid Graph-RAG
+pipeline enabled context-aware retrieval and explainable reasoning,
+validating the system’s suitability for assisting users in
+understanding contractual risks associated with digital services.
 
 \section{Comparative Study}
-Content
+This study compares a traditional approach for clause extraction,
+text only; and a newly proposed hybrid Graph-Recurrent Attention to
+Graph (RAG) Model for clause extraction. The existing literature
+demonstrates that transformer based question-answering models exhibit
+reasonable efficiency for clause extraction but fall short of
+contextual completeness and relationship oriented reasoning.
+Conversely, the proposed hybrid model in the RiskWise framework
+performed better with respect to capitalising upon contextual
+context, and demonstrating relationship between clauses. In addition,
+the knowledge graph aspect of the model facilitated identification of
+obligations/permissions which related but were not derived from
+semantic similarity. Also, the hybrid model provides contextually
+appropriate citation for both the text segments derived from clauses
+and the evidence for the relationships, making them contextually
+interpretable as well. Ultimately, this comparative analysis
+demonstrates that combining structural representations of contracts
+with semantic extraction improves reliability and interpretability in
+automated contract analysis systems.
 
 \section{Discussions}
-Content
-
+The proposed project clearly demonstrates the applicability of the
+knowledge graph and Retrieval-Augmented Generation paradigm to be
+combined for addressing legal document understanding tasks. By
+combining semantic as well as relational approaches, the system
+bridges the gap that has been noticed in the past. It is also
+important to note that the structural representation helps in
+improving the contextual completeness, especially when related
+clauses are identified in different spots. Additionally, the
+conversational interaction framework helps in improving accessibility
+by allowing users to inquire about document understanding in natural
+language queries. On the other hand, the study also points out some
+intrinsic limitations of generative AI systems, such as variations in
+output and reliance on model capability. Other trade-offs in
+performance between local and cloud inference modes have also been
+noticed, which are indicative of real-world deployment aspects.
 
 \section{Project Cost Estimation}
-Provide project execution cost and  product/service cost estimation in the form of Table.
+The RiskWise project was primarily developed using open-source
+technologies and existing computational resources, resulting in
+minimal direct financial expenditure. However, a conceptual cost
+estimation is presented to reflect potential implementation and
+operational expenses.
 
 \begin{table}[h]
-	\centering
-	\caption{Project Execution Cost}
-	\begin{tabular}{|c|p{2.5cm}|p{4.5cm}|c|c|c|}
-		\hline
-		\multicolumn{6}{|c|}{\textbf{Project Execution Cost}} \\
-		\hline
-		\textbf{No}  & \textbf{Category} &  \textbf{Description} & \textbf{Unit  Cost (\rupee )} & \textbf{Quantity} & \textbf{Cost}\\
-		\hline
-		1  & Material Costs &  Raw materials (electronics, electrical, wood, steel, etc.) & 1000 & 2 & 2000\\
-		2  & Equipment Costs &  Machinery and tools (rent or purchase) & 100 & 2 & 200\\
-		3  & Labor Costs &  Wages of outsourced work & 5000 & 1 & 5000\\
-		4  & Transportation &  Shipping and delivery of materials or equipment & 250 & 4 & 1000\\
-		\hline
-		\multicolumn{5}{|l|}{\textbf{Total Cost}} & 8200\\
-		\hline
-	\end{tabular}%
-	\label{tab:executioncost}%
+  \centering
+  \caption{Project Execution Cost}
+  \begin{tabular}{|c|p{2.5cm}|p{4.5cm}|c|c|c|}
+    \hline
+    \multicolumn{6}{|c|}{\textbf{Project Execution Cost}} \\
+    \hline
+    \textbf{No}  & \textbf{Category} &  \textbf{Description} &
+    \textbf{Estimated Cost (Rs.)}\\
+    \hline
+    1  & Software Tools & Open Source Frameworks and Libraries & 0 \\
+    2  & Hardware Resources &  Personal Computing resources & 0 \\
+    3  & Cloud Usage &  API inference and hosting (estimated) & 2000 \\
+    4  & Miscellaneous & Testing and internet usage & 1000
+    \hline
+    \multicolumn{3}{|l|}{\textbf{Total Cost}} & 3000\\
+    \hline
+  \end{tabular}%
+  \label{tab:executioncost}%
 \end{table}%
-
 
 \begin{table}[h]
-	\centering
-	\caption{Product/Service Cost Estimation}
-	\begin{tabular}{|c|p{2.5cm}|p{4.5cm}|c|c|c|}
-		\hline
-		\multicolumn{6}{|c|}{\textbf{Product/Service Cost Estimation}} \\
-		\hline
-		\textbf{No}  & \textbf{Item} &  \textbf{Description} & \textbf{Unit  Cost (\rupee )} & \textbf{Quantity} & \textbf{Cost}\\
-		\hline
-		1  & Item1 &  Description1 & 1000 & 2 & 2000\\
-		2  & Item2 &  Description2 & 100 & 2 & 200\\
-		3  & Item3 &  Description3 & 5000 & 1 & 5000\\
-		4  & Item4 &  Description4 & 250 & 4 & 1000\\
-		\hline
-		\multicolumn{5}{|l|}{\textbf{Total Cost}} & 8200\\
-		\hline
-	\end{tabular}%
-	\label{tab:costestimation}%
+  \centering
+  \caption{Service Deployment Cost}
+  \begin{tabular}{|c|p{2.5cm}|p{4.5cm}|c|c|c|}
+    \hline
+    \multicolumn{6}{|c|}{\textbf{Service Deployment Cost}} \\
+    \hline
+    \textbf{No}  & \textbf{Component} &  \textbf{Estimated Monthly Cost(Rs.)} &
+    \hline
+    1  & Cloud Hosting & 1500 \\
+    2  & Model Inference API &  3000 \\
+    3  & Database Hosting & 1000 \\
+    \hline
+    \multicolumn{3}{|l|}{\textbf{Total Cost}} & 5500\\
+    \hline
+  \end{tabular}%
+  \label{tab:costestimation}%
 \end{table}%
-
 
 \section{Project Impact}
-Provide detailed explanation on the impact of professional engineering
-solutions in societal and environmental contexts. 
+
 \subsection{Environmental Impact}
+This application is based mainly on software and does not involve
+large amounts of physical resources. Cloud-based processing may
+increase indirect energy consumption. However, due to clever
+retrieval mechanisms and caching strategies for the best possible
+retrieval, there is less effort for computer overhead because
+redundant computation is avoided.
+
 \subsection{Societal Impact}
+The significance of the RiskWise project as a whole is on the side of
+humanity. The system encourages transparency and informed consent in
+digital environments. The system assists users to make educated
+choices regarding digital service adoption through comprehension of
+terms, by reducing the complexity of contractual contracts. It helps
+make a dent in consumer knowledge, enhances digital literacy, and
+gives everyone equitable access to information.
+
 \subsection{Economical Impact}
+Economically, the system demonstrates potential to reduce legal
+consultation costs for preliminary contract understanding and risk
+identification. Organizations may also benefit from automated
+contract review capabilities, improving operational efficiency. The
+architecture’s reliance on open-source technologies further enhances
+cost-effectiveness and accessibility.
 
 \section{SDG Goal Compliance}
-Provide detailed explanation on how your project addressing SDG goal/s.\\ 
- Justification and the relevant SDG Goal\\
-Impact study and reduction of carbon footprint, if any\\
+The project satisfies a number of the United Nations Sustainable
+Development Goals (SDGs). The project satisfies SDG 9 (Industry,
+Innovation, and Infrastructure) through the development of innovative
+AI-driven infrastructure for automating document analysis. The
+project also satisfies SDG 16 (Peace, Justice, and Strong
+Institutions) through the promotion of transparency and fairness in
+contractual relationships and through the enhancement of access to
+understandable legal information. The project indirectly supports the
+promotion of inclusive digital ecosystems and responsible
+technological innovation through the empowerment of users with
+knowledge about digital agreements.
 
 \section{Conclusions}
-Conclusion should be on new page and the same should come here.\\
-Conclusions on stated objectives (Conclusions to be numbered correlating with stated objectives and not bulleted)\\
-Conclusions beyond stated objectives\\
-General conclusions, if any\\
-
+The current study has been able to achieve the objectives of
+designing and implementing a hybrid Graph-RAG approach for the
+automated analysis of Terms of Service. The system has been able to
+efficiently combine semantic embeddings, knowledge graphs, and
+generative reasoning power.
+The RiskWise system designed in the current research study
+demonstrates the feasibility of transforming complex legal texts into
+interpretable insights using context-aware analysis and reasoning.
+The hybrid search strategy was able to enhance the completeness and
+correctness of context awareness over the baseline approaches, and
+the conversational interface was able to enhance accessibility for non-experts.
+The current research study introduces a new contribution to the legal
+AI community by offering a new consumer-oriented application of
+hybrid search architectures.
 
 \section{Scope for Future Work}
-Future scope should be on new page and the same should come here.\\
- Indicate broad objectives\\
-Suggested methodology/s\\
 
-
-
-	
-	
-
-
-
-
-
-
+RiskWise sets up a base framework for automated Terms of Service
+analysis based on hybrid retrieval and reasoning methodologies.
+Nevertheless, there are still many research and development
+opportunities to improve system capability and expand its flexibility
+as well. Immediate direction is the integration of multilingual
+processing to support analysis of contractual documents even in
+several languages. The use of multilingual embedding models and
+language-agnostic large language models will ensure that the user
+base will be global in nature, and also expand the usability beyond
+English-language agreements.
+In addition, the incorporation of Optical Character Recognition (OCR)
+processing would also allow scanned and image-based documents to be
+processed and thus extending the coverage on document-based
+applications and its real life relevance.
+Another major extension is the ability to visualise knowledge graph
+structures more graphically. Interactive and dynamic graph
+visualizations would enable users to explore the relationship and the
+implications of contractual entity vs obligations vs permissions that
+makes them more interpretable and can improve understanding in terms
+of how to understand the document semantics. This visualization might
+additionally benefit legal practitioners in exploratory contract
+analysis and compliance auditing.
+Personalization methods may also be investigated under the Risk
+Analysis model in future. Customizable risk profiles would make it so
+users can prioritize individual categories - privacy, financial
+obligations, liability clauses, and so on. Adaptive analysis that
+caters to user preferences may help in enhancing relevance and
+providing context aware interpretation of contractual risks.
+Integrating with browser extensions is a promising line of real-time
+ToS evaluation from a deployment perspective. This kind of
+integration could automatically analyze agreements encountered while
+interacting online, offering proactive intelligence before one agrees
+a contract’s language terms. Also, enterprise-oriented batch
+processing capabilities could let companies review multiple contracts
+with various vendors and perform comparative contract risk assessments.
+Methodologically there are opportunities to broaden the reasoning
+ability of the enterprise, by including legal terminology and
+databases for their domain knowledge. For example, augmenting the
+construction of knowledge graphs with external legal standards and
+precedent information could allow semantic richness and enable more
+complex compliance based reasoning.
+The research agenda's focus will also be to engage in empirical
+validation of the proposed framework by conducting quantitative
+benchmarking with annotated legal datasets and evaluating system
+performance metrics related to clause identification and retrieval
+accuracy: identifying user studies to support research into
+usability, trust and interpretability can also support determining
+user performance in human-centered systems. The ability to consider
+and investigate possible distributed infrastructures for data
+processing, optimally indexed storage technologies, and compression
+techniques will facilitate broad-scale application opportunities.
+Enhancements to privacy and security through on-device inference and
+encrypted knowledge storage will also create greater user trust and
+increase user experience. RiskWise is a scalable platform that will
+continue to enable more research into AI-enhanced contract
+comprehension. These types of research initiatives are decentralizing
+the direction of hybrid retrieval architectures research and pursuing
+paths that will produce real-world deployment environments that have
+embraced transparency and will yield results of enlightenment.
