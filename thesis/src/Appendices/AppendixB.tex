@@ -1,11 +1,80 @@
 % Appendix B
 
 \chapter{Hardware and Software Tools} % Main appendix title
-\label{AppendixB} % For referencing this appendix elsewhere, use \ref{AppendixA}
+\label{AppendixB}
 
+\section{Hardware Requirements}
 
-\section{Appendix B Section 1}
+The RiskWise system was developed and tested using standard personal computing infrastructure capable of supporting modern web development and machine learning workloads. The hardware configuration used during development is summarized below.
 
-\section{Appendix B Section 2}
+\begin{table}[h]
+  \centering
+  \caption{Hardware Requirements}
+  \begin{tabular}{|p{4cm}|p{8cm}|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Hardware Requirements}} \\
+    \hline
+    \textbf{Component} & \textbf{Specification} \\
+    \hline
+    Processor & Multi-core CPU (Intel i5/i7 or equivalent) \\
+    RAM & 16 GB system memory \\
+    Storage & SSD-based storage for faster indexing and retrieval \\
+    GPU (optional) & Not mandatory; used only if local LLM inference required \\
+    Network & Stable internet connection for cloud API access \\
+    \hline
+  \end{tabular}
+  \label{tab:hardware_requirements}
+\end{table}
 
-\section{Appendix B Section 3}
+For privacy-focused deployments involving local model execution, higher RAM capacity and GPU acceleration may be beneficial to ensure acceptable inference latency.
+
+\section{Software Requirements}
+
+The RiskWise system employs a full-stack architecture integrating multiple software components across frontend, backend, data storage, and AI processing layers.
+
+\begin{table}[h]
+  \centering
+  \caption{Software Requirements}
+  \begin{tabular}{|p{3.5cm}|p{4cm}|p{6.5cm}|}
+    \hline
+    \multicolumn{3}{|c|}{\textbf{Software Requirements}} \\
+    \hline
+    \textbf{Category} & \textbf{Software / Tool} & \textbf{Purpose} \\
+    \hline
+    Operating System & Windows / Linux & Development and execution environment \\
+    Programming Language & Python & Backend and AI pipeline implementation \\
+    Frontend Framework & ReactJS & User interface development \\
+    Backend Framework & FastAPI & API and asynchronous processing \\
+    Database & Neo4j & Knowledge graph and vector storage \\
+    AI Framework & LangChain & Retrieval orchestration and LLM integration \\
+    NLP Libraries & spaCy, Transformers & Text processing and embeddings \\
+    Version Control & Git \& GitHub & Source code management \\
+    Package Manager & pip / npm & Dependency management \\
+    Development Environment & VS Code & Code editing and debugging \\
+    \hline
+  \end{tabular}
+  \label{tab:software_requirements}
+\end{table}
+
+\section{Deployment and Runtime Tools}
+
+Additional tools supporting system execution and experimentation include:
+
+\begin{table}[h]
+  \centering
+  \caption{Deployment and Runtime Tools}
+  \begin{tabular}{|p{4cm}|p{8cm}|}
+    \hline
+    \multicolumn{2}{|c|}{\textbf{Deployment and Runtime Tools}} \\
+    \hline
+    \textbf{Tool} & \textbf{Purpose} \\
+    \hline
+    Ollama & Local LLM inference \\
+    Groq API & Cloud-based LLM inference \\
+    Node.js & Frontend build environment \\
+    Browser & User interface access and testing \\
+    Mermaid / Diagram tools & System visualization \\
+    \hline
+  \end{tabular}
+  \label{tab:deployment_tools}
+\end{table}
