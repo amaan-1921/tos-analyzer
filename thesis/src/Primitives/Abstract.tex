@@ -1,10 +1,46 @@
-\abstract{\addtocontents{toc}{\vspace{1em}} 
-	
-	All reports or thesis, both BTech and MTech, must have an abstract included in it. An abstract is a summary of what is in the report or thesis. 
-	\\
-	To Add/Edit abstract page open /Primitive/Abstract.tex file 
+\abstract{\addtocontents{toc}{\vspace{1em}}
+  The proliferation of digital services has led to users often
+  validating Terms of Service (ToS) and privacy agreements that are
+  lengthy, complicated and hard to understand in their entirety
+  without legal skills. As a result, users may voluntarily agree to
+  clauses that affect their privacy, financial responsibilities, and
+  legal rights. In order to meet this challenge, this project
+  introduces RiskWise, which introduces a web-based intelligent
+  system that can automatically analyze ToS documents and also
+  emphasizes potentially risky contractual clauses in an easy to
+  comprehend and explainable way. The proposed architecture combines
+  Natural Language Processing, Knowledge Graph generation and
+  Retrieval-Augmented Generation in a single hybrid model.
+
+  Uploaded documents are semantically parsed and chunked and then
+  embedded into document embedding in a pattern and similarity-based
+  retrieval. Concurrently, structured subject-predicate-object
+  relationships are taken to build a knowledge graph that reflects
+  contractual entities and obligations.
+
+  A hybrid retrieval framework built upon vector similarity search
+  and graph traversal extracts enriched contextual information, which
+  is subsequently analyzed by a generative language model in order to
+  detect risky clauses, grade them for severity and generate
+  user-friendly explanations. The functional prototype was created
+  with a modular full stack model using a React frontend, FastAPI
+  backend, and graph database that supports relational and vector versions.
+
+  Case-based experimental testing validated the capability of the
+  system to retrieve contextually relevant clauses, justify their
+  nature, and allow interactive user exploration via conversational querying.
+
+  These findings show that hybrid Graph-RAG architectures can indeed
+  be applied to facilitate contextual completeness and
+  interpretability of automated legal document analysis. RiskWise
+  bridges these gaps by translating complex contractual content into
+  actionable insights, helping provide transparency for the digital
+  experience, supporting informed consent, and educating the audience
+  of users on what they can do in a digital landscape.
 }
 
-\textbf{\textit{Keywords}:} Word1, Word2
-
+\textbf{\textit{Keywords}:} Terms of Service Analysis, Knowledge
+Graph, Retrieval-Augmented Generation, Legal NLP, Hybrid Retrieval,
+Explainable AI
 \clearpage % Start a new page
+
