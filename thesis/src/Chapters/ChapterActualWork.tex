@@ -1,157 +1,423 @@
 \chapter{ACTUAL WORK} % Main chapter title
-\label{ChapterActualWork} % For referencing the chapter elsewhere, use \ref{Chapter1} 
-
-
-Upon completion of identifying \& formulating the research problem, and carrying out the necessary literature survey and review, the actual work on the project is taken-up. This chapter is dedicated to the actual work done by students. Hence, the chapter name and sub-chapter names are not fixed. It is left to the discretion of the students with appropriate guidance from their respective supervisors. However, one or more of the following aspects (as applicable) shall be covered in this chapter:
-\begin{itemize}
-	\item Methodology of the study or actual work (different from research methodology)
-	\item Experimental and/or analytical work completed in the project
-	\item Modeling, Analysis and Design
-	\item Prototype and testing
-\end{itemize}
-
-
+\label{ChapterActualWork} % For referencing the chapter elsewhere,
+% use \ref{Chapter1}
 
 \section{Methodology for the Study}\index{Methodology}
+By implementing the RiskWise system based on a multi-stage process,
+an unstructured legal document like a Terms of Service is converted
+to a structured knowledge representation, which is accompanied by
+user-related risk insights. Unlike the research methodology outlined
+in Chapter 2, which highlights more on conceptual design and research
+strategy, this section describes the actual operational workflow
+developed in the developed framework. The processing pipeline is
+intended to transform raw legal text into understandable outputs in a
+systematic way through a series of structured analytical steps.
+
+The method consists of document ingestion where users upload Terms of
+Service documents via the web-based interaction. Backend service is
+used to evaluate uploaded files and to handle documents in multiple
+formats, ensuring flexibility and usability across diverse sources.
+After ingestion the text extraction process extracts the textual data
+from the documents and maintain logical order and structural
+integrity. Next, we perform semantic segmentation of the extracted
+content (coherent chunking of text at clause level). This
+segmentation mechanism maintains ongoing context and facilitates the
+efficient retrieval and reasoning tasks performed further down the line.
+
+Next, semantic embeddings are created for each segmented text unit
+using domain-adapted embedding models appropriate for representing
+subtle legal semantics. These embeddings are vectors of textual
+meaning allowing similarity-oriented retrieval over semantically
+related clauses even beyond lexical overlap. The generated embeddings
+are stored in a vector indexing mechanism that allows fast and
+scalable nearest-neighbor search during analysis and query processing.
+
+Alongside embedding generation, language models can also be used to
+extract subject-predicate-object triples from textual segments, which
+in turn form the groundwork for a representation in a knowledge
+graph. Such a structured representation can account for relational
+dependencies among the entities like users, service providers,
+permissions, obligations and contractual actions. By establishing
+relationships between document components, the knowledge graph makes
+relational analysis and context connection possible beyond surface
+patterns of textual similarity, enhancing the semantic knowledge of
+contractual content.
+
+In addition, to combine semantic knowledge with that of the
+structure, a hybrid retrieval mechanism is designed to use vector
+similarity search together with knowledge graph traversal. This
+integrated method allows one to retrieve contextually relevant
+clauses together with relationally connected information, thereby
+yielding enriched contextual assemblies that allow comprehensive
+analysis. The hybrid retrieval strategy combats the shortcomings of
+single-modality retrieval methods while also improving the richness
+of contextual evidence provided for reasoning tasks.
+
+Lastly, the contextual information retrieved is processed by a
+generative reasoning module set up for risk-based processing. This
+module provides analyses of the context, and uses it to categorize
+potential risky clauses, to make severity judgments to help derive a
+score and categorize risk-types and to provide explainable summaries
+in natural language based on evidence retrieved. Combining retrieval
+grounding with generative reasoning, the system's outputs are
+interpretable, contextually aware, and consistent with document details.
+
+The RiskWise system manages the efficient, explorable and
+context-sensitive analysis of contractual documents through the
+multi-step and coordinated approach, making it possible to process
+intricate legal agreements into general users’ accessible results.
 
 \section{Experimental  Work}
+The experimental stage of the project was characterized by iterative
+evaluation of different methods for automated clause detection and
+risk identification. Initial experimentation explored
+transformer-based models to perform question-answering tasks for
+clause extraction, giving baseline insights about what the models can
+do for understanding legal text. Subsequent experimental phases
+focused on validation of prominent components across different
+architectures, such as semantic chunking schemes, accuracy of
+embedding-based retrieval and knowledge graph construction. ToS
+documents from a variety of digital platforms were examined and
+processed in the pipeline to analyze system robustness for different
+document structures and legal formulations using multiple ToS
+documents as case studies. Overall, the comparative analysis of the
+retrieval results confirms that hybrid retrieval mechanisms achieved
+greater contextual completeness than purely semantic retrieval. Also,
+testing local and cloud-based inference modes allowed for the
+comparison of performance trade-offs between computational efficiency
+and response latency. The experiments informed architectural
+fine-tuning and supported validation of the proposed hybrid Graph-RAG framework.
+
 \section{Analytical Work}
+Analytical work performed in the project mostly focused on analysing
+system outputs to address relevance, contextual integrity, and
+interpretability of the generated risk insights. We manually reviewed
+the retrieved clauses for semantic similarity search for contextually
+appropriate segments corresponding to user queries and analysis
+tasks. The extracted relationships were checked to be accurate in
+terms of logical consistency to ensure that the extracted
+relationships corresponded to that of identified entities. Graph
+traversal results were checked to confirm that relational context
+contributed meaningful information beyond vector retrieval results.
+The risk analysis outputs created by the reasoning module were
+checked for clarity, correctness, and alignment with the underlying
+document content. Severity scores and risk categorizations were
+observed to see if these actually represented matters of contractual
+concern, such as unilateral modifications, limitations on liability,
+and data usage permissions. From this analysis, the project ensured
+proper contextual grounding and user interpretability of system outputs.
+
 \section{Modeling, Analysis \& Design}
+A modular and multi-tiered architecture is used to represent the
+system. The system consists of an end-user web-based interface
+(presentation layer), a back-end processing system (processing
+layer), and storage system (storage layer). The focus of the
+presentation layer is to provide an intuitive and simple-to-use
+interface for users (non-technical). The processing layer is where
+the intelligence of this system resides and consists of six
+processing modules: text extraction, semantic chunking, embedding
+generation, knowledge graph construction, hybrid retrieval, and
+generative reasoning. While each module functions independently, they
+all contribute to the same processing pipeline. The storage layer
+utilizes a graph database that has vector indexing and relational
+storage capabilities.
+Furthermore, this design aids in retrieval and reasoning by attaching
+semantic and structural information together. The key factors in how
+the system was designed are modularity, scalability and clarity.
+Because the system separates the vector and graph representation of
+information, different retrieval options can be utilized. The modular
+processing components can accommodate future growth and enhancements
+to the processing models without the need to re-design the entire system.
+
+\paragraph*{Figure} Retrieval Mechanism [Figure \ref{fig:a}]
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.3]{Figures/forward_pass_through_architecture.png}
+    \caption{Retrieval Mechanism}
+    \label{fig:a}
+  \end{center}
+\end{figure}
+
+\paragraph*{Figure} Frontend Architecture [Figure \ref{fig:b}]
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.3]{Figures/frontend.png}
+    \caption{Frontend Architecture}
+    \label{fig:b}
+  \end{center}
+\end{figure}
 
 \section{Prototype \& Testing}
+To demonstrate end-to-end analysis functionality, the RiskWise system
+has been created as a prototype consisting of a web user interface
+integrated with back-end capabilities to process and analyze
+documents. Users can upload ToS documents, check their processing
+status, view risk results classified by type, and interact with the
+system using a conversational query interface. The prototype testing
+was performed by simulating various user scenarios (e.g. uploading a
+  document, displaying risk analysis results, and answering queries in
+context). Functional testing was performed to verify that each stage
+of the pipeline was executed correctly and integration testing was
+conducted to verify that the front-end and back-end systems
+interacted correctly. For performance testing, processing time was
+measured for different document sizes and inference configurations to
+ensure there were expected differences in latency between local and
+cloud executions. Unsupported formats and invalid inputs were
+included in the testing to validate error handling and confirm
+strength of the system. The overall prototype testing indicated
+compliance with the functional correctness and usability requirements
+of the system.
 
 \section{Algorithms and Flowcharts}
+The operational workflow of the RiskWise system can be represented
+through algorithmic steps describing the document analysis pipeline.
 
-\section{Codes / Standards}
-
-\section*{Sample LaTeX Typesetting}
-
-
-
-\paragraph*{Figure} Vector Graphics EPS Format [Figure \ref{fig:fcmc1}]
-\begin{figure}[H]
-	\begin{center}
-		\includegraphics[scale=0.7]{Figures/manualtrip.eps}
-		\caption{Flowchart of Manual Controller}
-		\label{fig:fcmc1}
-	\end{center}
-\end{figure}
-
-This is shown in Figure \ref{fig:fcmc1}
-
-\paragraph*{Figure} JPEG/JPG Format [Figure \ref{fig:rb}]
-\begin{figure}[h]
-	\begin{center}
-		\includegraphics[scale=0.3]{Figures/relay.jpg}
-		\caption{Relay Board}
-		\label{fig:rb}
-	\end{center}
-\end{figure}
-
-\paragraph*{Table} Refer [Table \ref{tab:sm}]
-\begin{table}[h]
-	\centering
-	\caption{Student Marks}
-	\begin{tabular}{rr}
-		\toprule
-		Name  & Marks \\
-		\midrule
-		Ajay  & 10 \\
-		Vinay & 20 \\
-		\bottomrule
-	\end{tabular}%
-	\label{tab:sm}%
-\end{table}%
-
-
-\paragraph*{Cross References: Citation, Index, Reference, Equation reference}
-This is the methodology for the entire project work which includes even the process of deciding on the project title, objectives
-\index{Ojectives}, etc. This is mandatory for MTech and optional for BTech)\cite{abcdef}. The data is shown in Table \ref{tab:sm}. The equation shown in Equation \eqref{Eq:eq123}
-
-\paragraph*{Inline Equation}
-This is my equation.
-$	f = ma \pm \alpha \Delta \left[ {\begin{array}{*{20}{c}}
-	1 & \chi   \\
-	{ - 1} & 0  \\
-	\end{array}} \right] $
-,which is appearing in between some text.
-
-\paragraph*{Equation without Numbering} 
-\begin{equation*}
-	x = \frac{{ - b \pm \sqrt {{b^2} - 4ac} }}{{2a}}\
-\end{equation*}
-
-\paragraph*{Equation with Numbering} 
-\begin{equation} \label{Eq:eq123}
-\dot X = \left[ {\begin{array}{*{20}{c}}
-	1 & p  \\
-	2 & \alpha   \\
-	\end{array}} \right]\left[ {\begin{array}{*{20}{c}}
-	{{x_1}}  \\
-	{{x_2}}  \\
-	\end{array}} \right] + Bu\
-\end{equation}
-
-
-
-\paragraph*{Algorithm Format} 
-\begin{algorithm}
-	\caption{Addition of two 8 bit numbers}\label{alg:add8bit}
-	\begin{algorithmic}[1]	
-		\\ Start
-		\\ Input a and b
-		\\ c=a+b
-		\\ Output c
-		\\ stop
-	\end{algorithmic}
-\end{algorithm}
-
-
-\paragraph*{Enumeration Format}
-The following are the different flavor of Tex systems
+\textbf{Algorithm: RiskWise Document Analysis Pipeline}
 \begin{enumerate}
-	\item TeXLive TeX System
-		\begin{enumerate}
-			\item TeXLive for Windows
-			\begin{enumerate}
-				\item TeXLive
-				\item ProTex
-			\end{enumerate}
-			\item MacTeX for Mac
-		\end{enumerate}
-	\item MikTeX TeX System
+  \item Start
+  \item Accept document upload from user
+  \item Validate file format and generate document identifier
+  \item Extract textual content from document
+  \item Perform semantic segmentation into text chunks
+  \item Generate embeddings for each chunk
+  \item Store embeddings within vector index
+  \item Extract knowledge triples from chunks
+  \item Construct knowledge graph representation
+  \item Perform hybrid retrieval combining vector similarity and graph traversal
+  \item Provide retrieved context to generative reasoning module
+  \item Identify risky clauses and assign severity scores
+  \item Generate explainable summaries and present results
+  \item Enable interactive user querying
+  \item End
 \end{enumerate}
 
-\paragraph*{Bullets Format}
-The following are the advantages of LaTeX,
-\begin{itemize}
-	\item {\LaTeX} is highly portable and free.
-	\begin{itemize}
-		\item Contribute to TUG
-		\item Promote Free Softwares
-	\end{itemize}
-	\item Operating-system independent.
-	\item Complex scientific documents can be created
-	automatically.
-	\item High quality math typesetting.
-\end{itemize}
+\paragraph*{Figure} Document Analysis[Figure \ref{fig:c}]
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.3]{Figures/doc_proc.png}
+    \caption{Document Analysis}
+    \label{fig:c}
+  \end{center}
+\end{figure}
 
-\paragraph*{Program Inclusion} Program file present in other directory can be embedded into the report.
-\lstinputlisting{Files/code.asm}
+\paragraph*{Figure} Knowledge Graph Generation[Figure \ref{fig:d}]
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.3]{Figures/triple_gen.png}
+    \caption{Knowledge Graph Generation}
+    \label{fig:d}
+  \end{center}
+\end{figure}
 
-\paragraph*{Verbatim Text} Include text as it is.
+\section{Codes / Standards}
+RiskWise system was developed in accordance with recognized standards
+of software engineering, with established tools in data handling,
+industry-oriented practices and standard methods to maintain
+reliability, integrity, maintainability, compatibility and
+responsible behavior. Due to being a work in the automated legal
+report inspection area, transparency and modularity and
+explainability at all stages of development were the focus of the code.
 \\
-The additional database schema is shown below which is used to store all the configuration and transaction data.
-\begin{verbatim}
-CREATE TABLE `controller_config` (
-`load_id` int(11) NOT NULL,
-`ct_constant` double DEFAULT NULL,
-`pt_constant` double DEFAULT NULL,
-`samples` int(11) DEFAULT NULL,
-`delay` double DEFAULT NULL,
-PRIMARY KEY (`load_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-SELECT * FROM loadcontroller.load_details;
-\end{verbatim} 
 
+\textbf{Standards for Software Development}
 
+The framework was mostly developed in Python code and was written in
+a standard coding fashion to make it easier to read, collaborate, and
+maintain. To make sure that the code was readable, standard naming
+and modular programming practices, as well as organizing modules in
+an organized way, were followed. The main functional modules, such as
+document processing, embedding generation, knowledge graph
+construction, retrieval logic, and reasoning modules, were developed
+as separate modules.
+\\
+
+\textbf{API and Integration Standards}
+
+Both front-end-side and backend layer functionality of the
+interaction between pieces of system programming was handled by
+creating code on, for example, RESTful API principles of the RESTful
+API framework to enable communication between API components. Data
+exchange was done through standard HTTP request-response mechanisms,
+and JSON format which the data was used as the main data format
+because of its lightweight layout and the ability to use this media
+type for its lightweight and applicable platform. These integration
+methods were leveraged to facilitate easy integration of
+document-based service-ingestion systems, retrieval pipelines,
+retrieval methods, and interfaces in the user interface components
+were optimized by seamless orchestration.
+\\
+
+\textbf{Data Management and Data Protection Standards}
+
+Since user uploaded documents could include potentially proprietary
+contractual information, privacy-aware data handling practices were
+accounted for in the system development. We used uploaded documents
+as workstopped files and did not keep superfluous metadata and used
+temporary caching mechanisms for each iteration of the same document
+to enhance performance. The approach is focused on minimizing data
+and treating analysis artifacts with control; both data protection
+principles and ethical AI development principles are well-accepted.
+\\
+
+\textbf{Ethics in AI and Responsible Usage Guidelines}
+
+The RiskWise system was developed with a focus on responsible AI use.
+The returns on risk analysis are structured in a way that is based on
+the document context retrieved to mitigate the issue of hallucination
+in terms of how the generated explanations can be made more
+transparent in terms of interpretation. The system has a purposeful
+approach to its use in promoting user awareness rather than legal
+advice, and the generated outputs are provided in the form of
+informative insights that are meant to aid understanding.
+\\
+
+\textbf{NLP Standards and Knowledge Representation Standards}
+
+Normalization methods in NLP, such as text normalization, sentence
+segmentation, and semantic chunking, are performed on a periodic
+basis for data preparation in NLP. The embedding methods used were
+based on the transformer modeling paradigm that has been popular in
+modern semantic retrieval models. Additionally, the development of
+the knowledge graph was based on the subject-predicate-object
+representation paradigm that has been widely used in knowledge
+engineering, enabling data structure relationships in all document materials.
+\\
+
+\textbf{System Design and Documentation Standards}
+
+Project documentation is guided by academic and engineering
+documentation conventions for a modular system description,
+architectural diagrams, algorithmic representation, experimental
+verification and validation. We included flowcharts and system
+diagram of system functionality, which will facilitate reproducible
+and technically transparent design, so that the system design can be
+understood, reviewed and extended by any future researcher or developer.
+Following these coding, integration and operational conventions,
+RiskWise system ensures enhanced reliability, scalability and
+interpretability while ensuring the responsible processing of user
+provided contractual data. These behaviors all facilitate the
+development of a scalable and resilient platform for in the automatic
+interpretation of legal documents.
+
+%\section*{Sample LaTeX Typesetting}
+
+%\paragraph*{Figure} Vector Graphics EPS Format [Figure \ref{fig:fcmc1}]
+%\begin{figure}[H]
+%  \begin{center}
+%    \includegraphics[scale=0.7]{Figures/manualtrip.eps}
+%    \caption{Flowchart of Manual Controller}
+%    \label{fig:fcmc1}
+%  \end{center}
+%\end{figure}
+%
+%This is shown in Figure \ref{fig:fcmc1}
+%
+%\paragraph*{Table} Refer [Table \ref{tab:sm}]
+%\begin{table}[h]
+%  \centering
+%  \caption{Student Marks}
+%  \begin{tabular}{rr}
+%    \toprule
+%    Name  & Marks \\
+%    \midrule
+%    Ajay  & 10 \\
+%    Vinay & 20 \\
+%    \bottomrule
+%  \end{tabular}%
+%  \label{tab:sm}%
+%\end{table}%
+%
+%\paragraph*{Cross References: Citation, Index, Reference, Equation reference}
+%This is the methodology for the entire project work which includes
+%even the process of deciding on the project title, objectives
+%\index{Ojectives}, etc. This is mandatory for MTech and optional for
+%BTech)\cite{abcdef}. The data is shown in Table \ref{tab:sm}. The
+%equation shown in Equation \eqref{Eq:eq123}
+%
+%\paragraph*{Inline Equation}
+%This is my equation.
+%$  f = ma \pm \alpha \Delta \left[ {
+%  \begin{array}{*{20}{c}}
+%    1 & \chi   \\
+%    { - 1} & 0  \\
+%\end{array}} \right] $
+%,which is appearing in between some text.
+%
+%\paragraph*{Equation without Numbering}
+%\begin{equation*}
+%x = \frac{{ - b \pm \sqrt {{b^2} - 4ac} }}{{2a}}\
+%\end{equation*}
+%
+%\paragraph*{Equation with Numbering}
+%\begin{equation} \label{Eq:eq123}
+%\dot X = \left[ {
+%    \begin{array}{*{20}{c}}
+%      1 & p  \\
+%      2 & \alpha   \\
+%\end{array}} \right]\left[ {
+%    \begin{array}{*{20}{c}}
+%      {{x_1}}  \\
+%      {{x_2}}  \\
+%\end{array}} \right] + Bu\
+%\end{equation}
+%
+%\paragraph*{Algorithm Format}
+%\begin{algorithm}
+%\caption{Addition of two 8 bit numbers}\label{alg:add8bit}
+%\begin{algorithmic}[1]
+%  \\ Start
+%  \\ Input a and b
+%  \\ c=a+b
+%  \\ Output c
+%  \\ stop
+%\end{algorithmic}
+%\end{algorithm}
+%
+%\paragraph*{Enumeration Format}
+%The following are the different flavor of Tex systems
+%\begin{enumerate}
+%\item TeXLive TeX System
+%  \begin{enumerate}
+%    \item TeXLive for Windows
+%      \begin{enumerate}
+%        \item TeXLive
+%        \item ProTex
+%      \end{enumerate}
+%    \item MacTeX for Mac
+%  \end{enumerate}
+%\item MikTeX TeX System
+%\end{enumerate}
+%
+%\paragraph*{Bullets Format}
+%The following are the advantages of LaTeX,
+%\begin{itemize}
+%\item {\LaTeX} is highly portable and free.
+%  \begin{itemize}
+%    \item Contribute to TUG
+%    \item Promote Free Softwares
+%  \end{itemize}
+%\item Operating-system independent.
+%\item Complex scientific documents can be created
+%  automatically.
+%\item High quality math typesetting.
+%\end{itemize}
+
+%\paragraph*{Program Inclusion} Program file present in other
+%directory can be embedded into the report.
+%\lstinputlisting{Files/code.asm}
+%
+%\paragraph*{Verbatim Text} Include text as it is.
+%\\
+%The additional database schema is shown below which is used to store
+%all the configuration and transaction data.
+%\begin{verbatim}
+%CREATE TABLE `controller_config` (
+%`load_id` int(11) NOT NULL,
+%`ct_constant` double DEFAULT NULL,
+%`pt_constant` double DEFAULT NULL,
+%`samples` int(11) DEFAULT NULL,
+%`delay` double DEFAULT NULL,
+%PRIMARY KEY (`load_id`)
+%) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+%SELECT * FROM loadcontroller.load_details;
+%\end{verbatim}
