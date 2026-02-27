@@ -142,34 +142,34 @@ Output:
 Text:
 "Users cannot share their passwords with anyone."
 Output:
-(User, cannot_share, passwords)
+(User, cannot\_share, passwords)
 
 Text:
 "The User must provide accurate information during account registration."
 Output:
-(User, must_provide, accurate information)
-(User, registers_for, Account)
+(User, must\_provide, accurate information)
+(User, registers\_for, Account)
 
 Text:
 "The Company may terminate your subscription at any time with notice."
 Output:
-(Company, may_terminate, subscription)
-(Company, gives_notice, User)
+(Company, may\_terminate, subscription)
+(Company, gives\_notice, User)
 
 Text:
 "By using the Service, you agree to the Terms of Service and Privacy Policy."
 Output:
-(User, agrees_to, Terms of Service)
-(User, agrees_to, Privacy Policy)
+(User, agrees\_to, Terms of Service)
+(User, agrees\_to, Privacy Policy)
 
 Text:
 "If the User violates the rules, the Company may suspend the account."
 Output:
 (User, violates, rules)
-(Company, may_suspend, account)
+(Company, may\_suspend, account)
 
 Now extract triples from this text:
-"(chunk_text)"
+"(chunk\_text)"
 
 \subsection{Risk Analysis Prompt}
 Prompt used to instruct the model to identify risky clauses, assign scores, and provide explanations.
@@ -193,7 +193,7 @@ IMPORTANT:
 - Be specific about WHO is harmed and HOW
 
 Terms of Service:
-(document_text)
+(document\_text)
 
 Now identify the MOST RISKY clauses. Start with the highest risk items.
 
