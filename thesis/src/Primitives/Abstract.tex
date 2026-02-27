@@ -9,22 +9,22 @@
   system that can automatically analyze ToS documents and also
   emphasizes potentially risky contractual clauses in an easy to
   comprehend and explainable way. The proposed architecture combines
-  Natural Language Processing, Knowledge Graph generation and
-  Retrieval-Augmented Generation in a single hybrid model.
+  Natural Language Processing\index{NLP}, Knowledge Graph\index{Knowledge Graph} generation and
+  Retrieval-Augmented Generation\index{RAG} in a single hybrid model.
 
-  Uploaded documents are semantically parsed and chunked and then
-  embedded into document embedding in a pattern and similarity-based
+  Uploaded documents are semantically parsed and chunked\index{Semantic Chunking} and then
+  embedded into document embedding\index{Semantic Embedding} in a pattern and similarity-based
   retrieval. Concurrently, structured subject-predicate-object
-  relationships are taken to build a knowledge graph that reflects
+  relationships\index{Triple Extraction} are taken to build a knowledge graph that reflects
   contractual entities and obligations.
 
-  A hybrid retrieval framework built upon vector similarity search
-  and graph traversal extracts enriched contextual information, which
-  is subsequently analyzed by a generative language model in order to
-  detect risky clauses, grade them for severity and generate
-  user-friendly explanations. The functional prototype was created
-  with a modular full stack model using a React frontend, FastAPI
-  backend, and graph database that supports relational and vector versions.
+  A hybrid retrieval framework\index{Hybrid Retrieval} built upon vector similarity search\index{Vector Similarity Search}
+  and graph traversal\index{Graph Traversal} extracts enriched contextual information, which
+  is subsequently analyzed by a generative language model\index{LLM} in order to
+  detect risky clauses\index{Clause Detection}, grade them for severity\index{Risk Analysis} and generate
+  user-friendly explanations\index{Explainable AI}. The functional prototype was created
+  with a modular full stack model using a React\index{React} frontend, FastAPI\index{FastAPI}
+  backend, and graph database\index{Graph Database} that supports relational and vector\index{Vector Database} versions.
 
   Case-based experimental testing validated the capability of the
   system to retrieve contextually relevant clauses, justify their

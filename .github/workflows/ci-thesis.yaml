@@ -26,6 +26,8 @@ jobs:
         with:
           root_file: ProjectReport.tex
           working_directory: thesis/src
+          latexmk_shell_escape: true
+          args: -pdf -interaction=nonstopmode
 
       - name: Publish
         run: |

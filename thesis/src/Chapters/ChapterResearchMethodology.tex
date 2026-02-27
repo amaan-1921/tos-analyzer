@@ -67,35 +67,35 @@ processing pipeline designed to transform unstructured legal
 documents into an interpretable knowledge representation and risk
 analysis output. The major methodological stages are summarized below.
 
-\subsection{Document Ingestion and Semantic Parsing}
+\section{Document Ingestion and Semantic Parsing}
 It starts when users upload ToS documents in supported formats. Text
 extraction methods are used to extract raw textual content from
 documents, and semantic segmentation is performed into meaningful
-chunks. Semantic chunking, as opposed to fixed-length segmentation
+chunks. Semantic chunking\index{Semantic Chunking}, as opposed to fixed-length segmentation
 that discards contextual boundaries such as clauses and sections, can
 enhance the quality of downstream retrieval.
 
 \subsection{Embedding Generation and Vector Indexing}
-Semantic embeddings are obtained for each segment of the text chunk,
+Semantic embeddings\index{Semantic Embedding} are obtained for each segment of the text chunk,
 based on our domain-adapted embedding models which can represent
 legal semantics. Similarity-based retrieval is performed by storing
 such embeddings in a vector index, which facilitates efficient
-similarity-based retrieval during query processing. The vector
+similarity-based retrieval during query processing. The vector\index{Vector Database}
 component of the system is responsible for fuzzy matching and
 semantic equivalence detection of legal terminology variations.
 
 \subsection{Knowledge Graph Construction}
 Alongside embedding generation, the system builds out a knowledge
-graph for the document. Large Language Models are used to derive
-subject-predicate-object triples that describe relationships between
+graph for the document. Large Language Models\index{LLM} are used to derive
+subject-predicate-object triples\index{Triple Extraction} that describe relationships between
 entities such as service providers, users, data, and obligations.
 These triples are mapped to a structured legal ontology and stored in
-a graph database, preserving relational and logical dependencies
+a graph database\index{Graph Database}, preserving relational and logical dependencies
 within the document.
 
 \subsection{Hybrid Retrieval Mechanism}
-In the system we implement a hybrid retrieval strategy involving
-vector similarity and knowledge graph traversal. Vector retrieval
+In the system we implement a hybrid retrieval strategy\index{Hybrid Retrieval} involving
+vector similarity\index{Vector Similarity Search} and knowledge graph traversal\index{Graph Traversal}. Vector retrieval
 retrieves semantically relevant clauses, and graph traversal finds
 relationally connected information which don't share the common
 vocabulary. Incorporating these retrieval signals forms the
@@ -103,7 +103,7 @@ comprehensive background information that further justifies the
 reasoning ability.
 
 \subsection{Generative Reasoning and Risk Analysis}
-A generative language model set up as a legal risk assessor gets the
+A generative language model\index{Generative Reasoning} set up as a legal risk assessor\index{Risk Analysis} gets the
 combined contextual information. The model analyses clauses, finds
 potentially risky parts of contracts, gives them severity scores, and
 makes natural language summaries that are easy to understand based on

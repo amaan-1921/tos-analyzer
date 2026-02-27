@@ -13,7 +13,7 @@ developed in the developed framework. The processing pipeline is
 intended to transform raw legal text into understandable outputs in a
 systematic way through a series of structured analytical steps.
 
-The method consists of document ingestion where users upload Terms of
+The method consists of document ingestion\index{Document Ingestion} where users upload Terms of
 Service documents via the web-based interaction. Backend service is
 used to evaluate uploaded files and to handle documents in multiple
 formats, ensuring flexibility and usability across diverse sources.
@@ -24,18 +24,18 @@ content (coherent chunking of text at clause level). This
 segmentation mechanism maintains ongoing context and facilitates the
 efficient retrieval and reasoning tasks performed further down the line.
 
-Next, semantic embeddings are created for each segmented text unit
+Next, semantic embeddings\index{Semantic Embedding} are created for each segmented text unit
 using domain-adapted embedding models appropriate for representing
 subtle legal semantics. These embeddings are vectors of textual
 meaning allowing similarity-oriented retrieval over semantically
 related clauses even beyond lexical overlap. The generated embeddings
-are stored in a vector indexing mechanism that allows fast and
+are stored in a vector indexing\index{Vector Database} mechanism that allows fast and
 scalable nearest-neighbor search during analysis and query processing.
 
-Alongside embedding generation, language models can also be used to
-extract subject-predicate-object triples from textual segments, which
+Alongside embedding generation, language models\index{LLM} can also be used to
+extract subject-predicate-object triples\index{Triple Extraction} from textual segments, which
 in turn form the groundwork for a representation in a knowledge
-graph. Such a structured representation can account for relational
+graph\index{Knowledge Graph}. Such a structured representation can account for relational
 dependencies among the entities like users, service providers,
 permissions, obligations and contractual actions. By establishing
 relationships between document components, the knowledge graph makes
@@ -44,8 +44,8 @@ patterns of textual similarity, enhancing the semantic knowledge of
 contractual content.
 
 In addition, to combine semantic knowledge with that of the
-structure, a hybrid retrieval mechanism is designed to use vector
-similarity search together with knowledge graph traversal. This
+structure, a hybrid retrieval mechanism\index{Hybrid Retrieval} is designed to use vector
+similarity search\index{Vector Similarity Search} together with knowledge graph traversal\index{Graph Traversal}. This
 integrated method allows one to retrieve contextually relevant
 clauses together with relationally connected information, thereby
 yielding enriched contextual assemblies that allow comprehensive
@@ -54,10 +54,10 @@ single-modality retrieval methods while also improving the richness
 of contextual evidence provided for reasoning tasks.
 
 Lastly, the contextual information retrieved is processed by a
-generative reasoning module set up for risk-based processing. This
+generative reasoning module\index{Generative Reasoning} set up for risk-based processing\index{Risk Analysis}. This
 module provides analyses of the context, and uses it to categorize
-potential risky clauses, to make severity judgments to help derive a
-score and categorize risk-types and to provide explainable summaries
+potential risky clauses\index{Clause Detection}, to make severity judgments to help derive a
+score and categorize risk-types and to provide explainable summaries\index{Explainable AI}
 in natural language based on evidence retrieved. Combining retrieval
 grounding with generative reasoning, the system's outputs are
 interpretable, contextually aware, and consistent with document details.
@@ -97,9 +97,9 @@ appropriate segments corresponding to user queries and analysis
 tasks. The extracted relationships were checked to be accurate in
 terms of logical consistency to ensure that the extracted
 relationships corresponded to that of identified entities. Graph
-traversal results were checked to confirm that relational context
+traversal\index{Graph Traversal} results were checked to confirm that relational context
 contributed meaningful information beyond vector retrieval results.
-The risk analysis outputs created by the reasoning module were
+The risk analysis\index{Risk Analysis} outputs created by the reasoning module were
 checked for clarity, correctness, and alignment with the underlying
 document content. Severity scores and risk categorizations were
 observed to see if these actually represented matters of contractual
@@ -115,11 +115,11 @@ layer), and storage system (storage layer). The focus of the
 presentation layer is to provide an intuitive and simple-to-use
 interface for users (non-technical). The processing layer is where
 the intelligence of this system resides and consists of six
-processing modules: text extraction, semantic chunking, embedding
+processing modules: text extraction, semantic chunking\index{Semantic Chunking}, embedding
 generation, knowledge graph construction, hybrid retrieval, and
 generative reasoning. While each module functions independently, they
 all contribute to the same processing pipeline. The storage layer
-utilizes a graph database that has vector indexing and relational
+utilizes a graph database\index{Graph Database} that has vector indexing and relational
 storage capabilities.
 Furthermore, this design aids in retrieval and reasoning by attaching
 semantic and structural information together. The key factors in how
