@@ -135,6 +135,7 @@
 \setcounter{dbltopnumber}{9}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{longtable}
 \usepackage{epstopdf}
 \usepackage{booktabs}
 \usepackage{rotating}
