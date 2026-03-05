@@ -4,87 +4,87 @@
 
 Digital services have been growing exponentially and changed the way
 people are approaching technologies, allowing for the easy access to
-any apps, platforms, and the whole digital ecosystem. This expansion,
-however, has also led to an increased dependence on digital
-contractual agreements, such as Terms of Service (ToS), Privacy
-Policies, and End-User License Agreements (EULAs) which users have to
-accept prior to accessing services.
+any apps, platforms, and the whole digital ecosystem. 
+The expansion mentioned has also led to a lot of dependence on digital contractual agreements, 
+such as Terms of Service (ToS), Privacy Policies, and 
+End-User License Agreements (EULAs) which users have to accept prior to accessing services.
+
 \\
-Although these agreements provide critical legal foundations from
-which users and service providers can access and trust the service,
-their long-form and convoluted nature may make them difficult to read
-critically and understand, and pose issues regarding informed consent
-and digital transparency. However, the recent development of AI and
-Natural Language Processing\index{NLP} is enabling automated analysis of
-challenging textual information with no prior understanding.
+Although these agreements are important since they provide 
+legal relationships between users and service providers, they are 
+often very long and complicated. Because of this, the user finds it 
+difficult to read and fully understand them before accepting the 
+service, which raises concerns about whether or not the users 
+are truly given informed consent and if transparency exists.
+But on the bright side, the recent development of AI and 
+Natural Language Processing\index{NLP} have made it possible to automatically 
+analyse complex text without requiring prior knowledge of the content. 
 Techniques like semantic embeddings\index{Semantic Embedding}, knowledge graphs\index{Knowledge Graph}, and
-Retrieval-Augmented Generation\index{RAG} can help smart systems obtain insights
-out of unstructured documents whilst preserving the relationships in
-meaning.
+Retrieval-Augmented Generation\index{RAG} allow intelligent systems 
+to extract useful insights from unstructured documents, 
+while also preserving the meaning.
 \\
-Utilizing these advancements into an AI based framework to
-analyze legal agreements, the RiskWise initiative recommends the
-generation of intelligent risk-sensitive insights when it comes to
-understanding legal and other documents of the public domain. In this
-chapter, the background, motivation, and problem formulation of the
-proposed system is presented.
+By applying the advancements mentioned above, within an AI-based framework 
+to analyze legal agreements, the RiskWise initiative aims to generate 
+intelligent and risk-aware insights, that help users better understand 
+legal and other publicly available documents.
+\\
+This chapter discusses the background, motivation, and problem formulation of the proposed system.
 
 \section{Context and Background Study}
-As the scope of digital services and online platforms continues to
-grow rapidly, users are becoming more and more tied into Terms of
-Service (ToS), Privacy Policies and End-User License Agreements
-(EULAs) for gaining access to apps/services. These documents act as
-legally binding agreements between service providers and users
-detailing rights, obligations, limitations of liability, data usage
-policies, termination conditions, or other contractual provisions
-concerning service usage. Such agreements are absolutely necessary in
-order to make legal relationships between parties in digital
-ecosystems, but as the general user experience is often limited, a
-lot of the practical effectiveness is undermined. While significant,
-empirical studies and user behavior data routinely demonstrate that
-most users either very rarely read these documents in their entirety,
-or do not fully understand them. The top reasons are: too lengthy
-documents, complicated legal language, intricate structure styling
-and extensive cognitive labor, especially to understand.
+As the extent of digital services and online 
+platforms is expanding at a rapid rate, users are 
+becoming more and more bound by Terms of Service (ToS), 
+Privacy Policies and End User License Agreements (EULAs) 
+in order to gain access to apps/services. 
+What these documents do, is that they serve as legally binding 
+agreements between service providers and users 
+outlining their right, responsibilities, limitations of 
+liability, data usage policies, termination conditions and 
+other contractual terms related to the use of service.  
+Such agreements are necessary in order to make legal relationships 
+between parties in digital ecosystems. But since the general user 
+experience is often poor, their practical effectiveness is often reduced. 
+Although these agreements are important, studies and user behaviour data 
+show that most users either rarely read these documents 
+completely or do not fully understand them.
+The documents being too lengthy, 
+having complicated legal language, etc. are the 
+main reasons that contribute to this.
 \\
 This general disengagement results in a great divide between user
 informed consent and user understanding, that has implications for
-the legitimacy of informed consent in the digital realm. Thus, users
-are very frequently accepting agreements without knowing provisions
-that allow for comprehensive data collection, unilateral policy
-modifications, automatic subscription renewals, broad liability
-disclaimers, or restrictive dispute resolution mechanisms. Such
-elements may impose tremendous risks to user privacy, monetary
-obligations, legal recourse, and service access continuity. Moreover,
-the discrepancy between contract performance and user awareness has
-resulted in a fundamental need for technological solutions to promote
-transparency and accessibility of legal aspects. Recent developments
-in Artificial Intelligence, mainly Large Language Models (LLMs)\index{LLM} and
-Natural Language Processing (NLP)\index{NLP}, have shown enormous potential for
-automatic understanding of rich text. In addition, new methods, like
-Retrieval-Augmented Generation (RAG)\index{RAG}, semantic embeddings\index{Semantic Embedding}, and
-knowledge graph\index{Knowledge Graph} representations make structured understanding
-possible from unstructured documents (e.g., capturing semantic
-meaning and relational context). These advances are conducive to the
-building of intelligent systems, which are helping to support the
-comprehension of legal documents by users.
+the legitimacy of informed consent in the digital realm. 
+Therefore, users could often agree to the terms and not even be 
+aware of the possibilities for the complete collection of their 
+data, unilateral changes to policies, subscription renewals, etc. 
+This could lead to tremendous risks for their privacy, financial obligations, 
+and access to services. 
+New developments in Artificial Intelligence, specifically Large Language Models (LLMs)\index{LLM} and
+Natural Language Processing (NLP)\index{NLP}, have proven tremendous scope for the 
+automatic understanding of complex texts. On top of that, new techniques 
+such as Retrieval-Augmented Generation (RAG)\index{RAG}, semantic embeddings\index{Semantic Embedding}, and
+knowledge graph\index{Knowledge Graph} representations enable structured understanding from 
+unstructured texts (for example, semantic meaning and relationship). 
+These new developments are useful when it comes to creation of 
+intelligent systems that can assist in the comprehension of legal documents.
 \\
-The RiskWise framework, in
-this technological context, is presented here as an AI-driven
-solution to deal with legal documents, identify potentially risky
-clauses and present findings in a simplified and user-centric way.
-Using the hybrid form of retrieval and reasoning mechanism, the idea
-is to create a link between the complexity of a contract and user
+The RiskWise framework, in this technological context, is presented here as an 
+AI-driven solution to deal with legal documents, identify potentially 
+risky clauses and present findings in a simplified and user-centric way. 
+Using the hybrid form of 2 retrieval and reasoning mechanism, the idea is 
+to create a link between the complexity of a contract and user 
 understanding to guide decision making in digital interactions.
 
 \section{Need Analysis}
 A lot of practical, technical and societal reasons for the need of an
-automated Terms and Conditions analysis system exist. First of all,
-contemporary digital ecosystems involve high levels of communication
-with a variety of online services, each one of which requires users
-to accept contractual agreements. Time-consuming and requiring legal
-literacy that non-standard users lack, reading these items by hand
-results in surface acceptance but not much consideration of the content.
+automated Terms and Conditions analysis system exist. First of all, 
+modern digital ecosystems involve high levels of communication with a 
+variety of online services, each one of which requires users to accept 
+contractual agreements.
+Time-consuming and requiring legal literacy that non-standard 
+users lack, reading these items by hand results in
+surface acceptance but not much consideration of the content.
 \\
 Second, entities often include clauses granting wide discretion such
 as the exclusive power to change clauses, the broad flexibility to
@@ -92,11 +92,17 @@ share data and the rights to cancel accounts. When no analytical
 support is provided, users are exposed to unknowingly accepting
 unsatisfactory terms within a contract that may threaten their
 privacy, financial obligations to customers or their access to
-services. Thirdly, today’s automated applications are primarily
-focused upon providing a description of the work that users have done
-and fail to interpret the risk they have detected. Summarization may
-be an instrument to reduce the difficulty of documents but does not
-necessarily involve clauses introducing foreseeable potential risks\index{Risk Analysis}
+services. 
+\\
+Thirdly, today’s automated applications are primarily focused upon 
+providing a description of the work that the users have done and 
+fail to interpret the risk they have detected. 
+Summarization may be an instrument to reduce the difficulty of 
+documents but does not necessarily check for clauses, introducing 
+foreseeable potential risks (and why they might be associated). 
+Consequently, users need systems which can not only minimize 
+but also strategically identify, classify and
+situate contractual risks\index{Risk Analysis}
 (and why they might be associated).
 \\
 Consequently, users need systems
@@ -110,29 +116,30 @@ categorize potential risks, and walks the user through an interactive
 exploration of contractual content, and greatly increases their
 knowledge and decision-making capacity. Thus, there is a great demand
 for the proposed intelligent, user-friendly and privacy-preserving
-system for the assistance of users to weigh legal contracts prior to acceptance.
+system for the assistance of users to weigh legal contracts prior to 
+acceptance.
 
 \section{Problem Identification}
-The most important problem addressed by the project is that users
+The most important problem the project addresses is that users
 find it difficult to understand and assess complex legal documents in
-the digital service industry. This is due to a number of systemic
-issues. Firstly, legal documents contain specialized legal language
+the digital service industry. This is due to several
+flaws in the system. Firstly, legal documents contain specialised legal language
 and complex linguistic structures that are difficult to understand
-for laymen. Secondly, the nature of agreements is such that it deters
+for laymen. Secondly, the nature of agreements is such that it discourages
 complete reading, where selective attention (or complete avoidance)
-takes place. Thirdly, the average member of society does not possess
-the necessary legal knowledge to assess the contractual implications,
-such that it is unable to point out clauses that might have a
+takes place. Thirdly, a layman may not have
+the necessary legal knowledge to understand the implications of the contract
+such that they are unable to point out clauses that might have a
 potential impact on their rights and obligations.
 \\
-There are also no easy-to-use facilities to point out potentially
-unfair or risky clauses in contracts. The current state of affairs is
-such that it has low levels of interactivity, which might negatively
-impact the ability of users to pose questions or investigate specific
-contractual issues. All these issues mean that users lack awareness
-about agreements, which enables them to be vulnerable to privacy
-violations, financial liabilities, and service terminations with
-little understanding.
+In addition, there are no easy to use tools for pointing out
+unfair or risky contract terms. The current state has
+low levels of interactivity, which might be detrimental to the
+users, as they may not be able to pose questions about certain
+contract terms. All these issues make the users not aware of the context, 
+which makes them vulnerable to privacy
+infringements, financial risks, and service termination with
+too little understanding.
 
 \section{Problem Formulation}
 Building on the difficulties we have described here, this project

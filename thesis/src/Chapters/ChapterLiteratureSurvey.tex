@@ -6,78 +6,90 @@
 \section{Critical Review of Literature}
 A growing prevalence of digital services has resulted in a need for
 Terms of Service (ToS) agreements governing user-provider relations.
-But the complexity and lengthy nature of these documents have led to
-a number of significant research developments aimed at automated
-analysis of contractual material. The paper extends research on legal
-informatics, Natural Language Processing (NLP)\index{NLP}, and knowledge
-graph-based reasoning\index{Knowledge Graph} into interdisciplinary issues. Among these
-works, the CLAUDETTE framework is perhaps the most significant and
-introduced automated identification of potentially unfair clauses\index{Clause Detection}
-that form part of ToS agreements using ML techniques. The paper
-showcased that deep learning models can provide higher precision and
-recall over conventional classification methods. Although it came so
-far as a work of great significance to this space, the CLAUDETTE
-model was mostly based in clause-level classifications and did not
-handle contextual dependencies that could be captured between
-clauses, that is, does not reason on complex structures of contracts.
-Research along the lines of contract law has highlighted the broader
-societal consequences of unfair contract provisions and the need for
-regulatory oversight. As for unfair contract term legislation,
-research in the legal field of unfair contracts highlighted the gap
-between service providers and service consumers, highlighting the
-need for instruments that would facilitate transparent service
-provision and user awareness. Although these works offer a solid
-theoretical basis, they do not present automated technological tools
-for practical use by consumers. More recent work on the interface
-between AI and contract law has suggested neural and machine learning
-techniques for automated contract interpretation. These findings
-evidenced that AI-based systems can help to recognize unfair terms
-and assist lawyers with reviewing documents. Yet they also
-highlighted issues around interpretability, context-specific content,
-and embedding AI outputs within legal workflows. More recent
-breakthroughs using Retrieval-Augmented Generation (RAG)\index{RAG} and
-graph-based reasoning have opened new applications to tackle these
-kinds of challenges. Structure-aware Graph RAG methods have brought
-to the fore the significance of representing legal documents as
-structured entities with hierarchical and relational relations to one
-another. These methods yielded an increase in contextual retrieval\index{Contextual Retrieval} in
-contrast to vector-only methods, albeit they had an emphasis on
-legislative texts rather than private contractual agreements.
-Benchmarking studies measuring large language models\index{LLM} for contract
-review also found deficiencies in long-context thinking and clause
-retrieval accuracy. Linguistic models may fail to recognise such
-information in large documents, leading to the interest in hybrid
-architectures\index{Hybrid Retrieval} that combine semantic-based retrieval with
-deterministic structural navigation. Hybrid Graph-RAG pipelines for
-applications including financial analysis have also been developed
-which integrate vector similarity retrieval\index{Vector Similarity Search} with graph traversal\index{Graph Traversal} to
-enhance multi-hop reasoning. Although encouraging, these methods were
-not adapted to the legal document analysis or for clause detection on
-the basis of risk. On the whole, the reviewed literature suggests a
-considerable improvement in automated contract analysis approaches
-while highlighting still outstanding structural reasoning,
-explainability\index{Explainable AI}, and user-centric risk interpretability issues. These
-insights directly guided the development of the RiskWise framework.
+However, the complexity and length of such documents have given rise 
+to a number of important research developments in the automated 
+analysis of the contractual content itself. The paper extends the 
+research on legal infomatics, Natural Language Processing (NLP)\index{NLP}, 
+and knowledge graph-based reasoning\index{Knowledge Graph} into the 
+domain of interdisciplnary issues. Among all the research, 
+the CLAUDETTE framework is arguably the most important and has 
+introduced automated identification of potentially unfair 
+clauses\index{Clause Detection} included in ToS agreements, 
+employing ML algorithms.
+\\
+The paper proved that it could offer better precision and recall 
+in comparison to other classification techniques. 
+Though it has come so far as a work of such significance to the 
+field, the CLAUDETTE model was largely dependent on the 
+classification of clauses and did not consider the contextual 
+dependencies that could exist between clauses, i.e., 
+it did not reason on complex structures of contracts.
+Research in a similar area to contract law has revealed the consequences
+on society in general in regards to unfair contract provisions and the
+importance of intervention in such matters. As for unfair contract
+term legislation, research in the legal area of unfair contracts revealed
+the discrepancy between service providers and service consumers,
+emphasizing the need for instruments that would promote service
+provision and awareness among consumers.
+\\
+Although the above works give a good theoretical foundation they do not 
+suggest any technological tools 
+that can be automated for consumer use. Recent studies on the 
+interface of AI and contract law suggest neural and machine learning 
+technology for the automation of interpretation of contracts. 
+The above studies suggest that AI can help in identifying unfair 
+terms in contracts and can assist legal practitioners in interpreting 
+contracts. However, it also suggest that AI is limited in terms of 
+interpretation, content and context.
+\\
+Recent breakthroughs achieved using Retrieval-Augmented Generation 
+(RAG)\index{RAG} and graph-based techniques have created new 
+opportunities for dealing with these problems.
+The use of Graph RAG has highlighted the importance of legal 
+texts as structured texts that have hierarchical and relational relationships.
+The application of Graph RAG has provided better contextual 
+retrieval\index{Contextual Retrieval} compared to vector-based RAG methods,
+though with a focus on legislative texts rather than private contract
+agreements.
+\\
+Benchmarking studies on measuring large language models\index{LLM} for contract
+review have also identified gaps in thinking over long context and clause
+retrieval. Linguistic models may not identify information on large documents,
+and hence the interest in hybrid models\index{Hybrid Retrieval}. Hybrid
+architectures for applications such as financial analysis using Hybrid
+Graph-RAG models\index{Hybrid Retrieval} that include vector similarity
+search\index{Vector Similarity Search} and graph traversal\index{Graph Traversal} have also been proposed.
+While promising, such techniques were not specifically developed for the analysis of legal documents, 
+such as contracts, or for identifying clauses based on risks. 
+To summarise, the literature reviewed above clearly shows that 
+there has been substantial improvement in the automated techniques 
+for contract analysis, as well as the outstanding issues, which include 
+structural reasoning, explainability, and user-centered risk interpretability. 
+This has greatly affected the proposed RiskWise framework.
 
 \section{Literature Collection \& Segregation}
 The studies evaluated in this study systematically identified
 academic repositories like Google Scholar, arXiv, IEEE Xplore, and
-reference tracing from relevant publications. The studies identified
-were categorized into thematic groups for analysis. In the first
-category, we identified studies on unfair clause detection and legal
-text classification, specifically the CLAUDETTE framework and other
-machine learning-related studies. These studies provided a basic
-understanding of risk identification using automation but were mostly
-confined to classification models. There were also studies related to
-legal and policy-related studies on unfair contract terms and
-consumer protection policies. These studies provided domain knowledge
-on various problematic clauses and their implications. The third
-category was studies on AI-based legal analytics and contract
-understanding systems, which discussed the development of neural
-language models and automated reasoning systems. The fourth category
-included studies related to Retrieval-Augmented Generation, Knowledge
-Graph integration, and hybrid retrieval models that have recently
-gained prominence. This study has been a methodological inspiration
+reference tracing from relevant publications. 
+The identified studies were grouped into thematic groups for analysis.
+In the first category, studies on the detection of unfair clauses and 
+legal texts' classification, such as the
+CLAUDETTE framework, as well as other studies on machine learning, 
+were identified.
+\\
+The studies provided a basic understanding of risk identification 
+through the application of automation 12
+techniques, though most of the studies were limited to classification.
+There were also studies on legal and policy studies regarding unfair 
+contract terms and consumer protection policies.
+The studies provided domain knowledge on different problematic clauses.
+The third category of studies included AI-based legal analytics and 
+understanding of contracts, which discussed the development of neural language models.
+The fourth category of studies included those related to 
+Retrieval-Augmented Generation, Knowledge Graph,
+and hybrid retrieval models that have come into the limelight in recent times.
+\\
+This study has been a methodological inspiration
 for the integration of semantic and structural models in document
 understanding. This thematic categorization allowed the
 identification of complementary studies among research areas, which
@@ -87,65 +99,56 @@ also helped in identifying methodological gaps.
 According to a literature review, automated legal document analysis
 is progressively moving from traditional machine learning
 classification techniques to more sophisticated language model-based
-techniques. Despite being built to identify predefined clause
-patterns, classification-based systems have a deficiency in
-explanatory power and have often overlooked clause interactions.
-Although it provides few computational solutions, the legal
-literature highlights the significance of addressing unfair
-contractual provisions for society. AI-based approaches, on the other
-hand, frequently have contextual constraints and interpretability
-problems despite having strong text-understanding abilities. In order
-to improve context aggregation and reliability, new Graph-RAG
-approaches highlight structural representations and multi-hop
-reasoning. They also suggest hybrid retrieval strategies. However,
-there has not yet been a thorough application of such architectures
-in consumer-oriented ToS analysis.
-
-Therefore, in sum, the literature together suggests the feasibility
-of automated ToS analysis alongside the impetus for systems
-consisting of structural reasoning together with semantic retrieval
-and explainable risk assessment.
+techniques. 
+Though classification-based systems are geared towards recognizing 
+particular clause patterns, there is a limit to their explanatory 
+potential and a lack of consideration of clause interactions.
+Though providing few computational results, the legal literature 
+highlights the need to address clauses of unfair contract terms from a 
+social perspective.
+\\
+Though AI-based systems have certain limitations related to context, 
+they have a high potential for understanding text.
+As a measure to improve context aggregation, there is a focus on Graph RAG, 
+and its potential is emphasized, including structural representation and 
+multi-hop reasoning.
+However, these architectures have yet to undergo a thorough 
+implementation in consumer-oriented ToS analysis.
+Therefore, in conclusion, the literature indicates the feasibility of 
+ToS analysis and the requirement for systems
+comprising structural reasoning and semantic retrieval and risk 
+assessment in an explainable manner.
 
 \section{Identification of Gaps}
 Based on the critical review and synthesis of the literature
 surveyed, some research gaps were identified that form the basis for
 the development of the proposed system.
-First, current systems for unfair clause detection are largely
-dependent on classification models that examine clauses
-independently. Although these models are successful in identifying
-clauses belonging to predefined categories, they are often not able
-to take into consideration the larger context of the document in
-which the clauses are presented. As a result, the relationships
-between clauses, supporting statements, and cross-references that may
-have an impact on interpretation are often not considered, making it
-difficult to arrive at a reliable risk assessment.
-Second, current AI-powered contract analysis tools are often not very
-transparent about their results. Although these tools are successful
-in identifying clauses that may be potentially problematic, they are
-often not very forthcoming about the rationale used for risk classification.
+\\
+Firstly, it has been observed that
+the existing systems for detecting unfair clauses, for the most part, rely on classification models that classify each clause individually.
+Though it may have been successful in identifying the clauses of a particular kind, it may not always be possible to take into consideration the context of the document in which these clauses may be presented.
+It may not always be possible to arrive at a reliable risk assessment depending on the relationship between clauses, supporting statements, and references, which may or may not be applicable.
+\\
+Secondly, it may not always be very transparent with regard to the results obtained by existing AI-based contract analysis tools.
+Although these tools are successful in identifying clauses that may be potentially problematic, they are often not
+very forthcoming about the rationale used for risk classification.
+\\
+Third, the conventional Retrieval-Augmented Generation models generally work directly with flat forms of texts.
+This may lead to the problem of the "fragmentation of contextual information," where "semantically related clauses
+that are spread out in different parts of the document may not be retrieved together." As such, "crucial cross-referenced
+information may not be taken into account in the reasoning process."
+\\
+Fourthly, it has been shown that there is a limit in the way in which large scale models of language process complex relational dependencies in a document.
+In agreements where clauses and relationships are interdependent, it has been shown that there is a difficulty in maintaining a coherent state of understanding in large-scale models of language.
+\\
+Finally, existing research on the domain of automated contract analysis tools has been found to be mostly focused on
+the solutions that are meant for legal professionals and enterprise applications.
+These applications have been found to be used by domain experts and may require output in technical or legal
+formats that may not be easily understandable by a non-expert.
+This shows that there is a problem related to a lack of user-friendly tools that can interpret complex contract
+risks in an understandable format for a non-expert.
 
-Third, traditional Retrieval-Augmented Generation approaches usually
-process flat text forms of documents. This can cause a problem of
-fragmentation of contextual information, where semantically linked
-clauses scattered throughout different parts of a document are
-retrieved separately instead of together. As a result, critical
-cross-referenced information may not be considered in the reasoning
-process, impacting the completeness of generated insights.
-Fourth, large-scale language models have been shown to have
-limitations in properly capturing and reasoning about long documents
-with complex relational dependencies. When agreements involve
-interdependent clauses and hierarchical structures, language models
-may have difficulty sustaining coherent contextual understanding
-throughout the entire document, leading to incomplete retrieval or
-partial understanding of contractual relationships.
-Finally, the existing literature on automated contract analysis tools
-is dominated by solutions intended for legal professionals and
-enterprise applications. These tools are often assumed to be used by
-domain experts and may provide results in technical or legal-oriented
-formats that are not easily understandable by non-experts. This
-points to a problem in the lack of availability of user-friendly
-tools that can interpret complex contractual risks into
-understandable and actionable insights for non-experts.
+
 
 \section{Need for Research/Project}
 The gaps identified above indicate that there is a noticeable need
@@ -164,31 +167,25 @@ RAG-based language models.
 Despite the existence of Terms of Service contracts on digital
 platforms, users are not prepared to understand complex contractual
 terms and clauses that could negatively affect their rights, privacy,
-financial commitments, and service access terms. The contracts are
-complex, lengthy, and drafted in legal language that is not
-comprehensible to any layman, leading to users accepting terms in a
-contract without proper consideration. In terms of the difference
-between user acceptance and user awareness, this is one of the
-biggest risks to informed decision-making and transparency of digital
-ecosystems. While a few automated methods have been proposed for
-contract analysis, several such methods have some serious flaws. Some
-are largely based on clause-level classification methods that are
-unable to reason in context and fail to establish the relationship
-between distributed contractual clauses. Some methods provide simple
-and generic models of summarization based on language models that do
-not specifically point to potentially risky clauses or explain them
-in a manner that is interpretable to establish risks.
-Therefore, the need for a system that can mediate with contextual
-awareness and structured reasoning as well as user-centered
-interpretation is still required. Therefore, in this paper, the
-objective is to design and implement an intelligent and explainable
-system that can automatically analyze and understand the Terms of
-Service documents, identify the high-risk contractual clauses, and
-make these results interpretable for users. The solution will address
-the problem by using a hybrid retrieval and reasoning framework that
-combines semantic retrieval, knowledge graph construction, and
-generative language models to provide context-aware, transparent, and
-interactive analysis of legal contracts.
+financial commitments, and service access terms. 
+\\
+The contracts are complex, lengthy, and use legal terminology that is not understood by any layman,
+which results in the acceptance of terms of the contract by the users without proper consideration.
+In terms of the difference between acceptance of users and awareness of users, this is one of the biggest
+risks in terms of decision-making in a digital ecosystem.
+In terms of the analysis of contracts, though a few automatic methods have been proposed, there are
+several such methods that have some serious flaws.
+\\
+Some are largely based on clause-level classification methods that are unable to reason in context and fail to
+establish the relationship between distributed contractual clauses.
+Some methods provide simple and generic models of summarization based on language models that do not
+specifically point to potentially risky clauses or explain them in a manner that is interpretable to establish risks.
+Therefore, the need for a system that can mediate with contextual awareness and structured reasoning as well as
+user-centered interpretation, is still required.
+\\
+Hence the objective of the present paper is to develop an intelligent and transparent system that can analyse and comprehend the Terms of Service documents in an automated manner, as well as detect the critical clauses of the contract in a manner that can be easily interpreted by the user.
+The solution to the problem would be achieved through the development of a hybrid retrieval and reasoning paradigm to assist the use of semantic retrieval, knowledge graph construction, and generative language models.
+
 
 \section{Objectives}
 The main aims and objectives of the project are as follows:
