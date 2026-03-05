@@ -6,52 +6,54 @@
 By implementing the RiskWise system based on a multi-stage process,
 an unstructured legal document like a Terms of Service is converted
 to a structured knowledge representation, which is accompanied by
-user-related risk insights. Unlike the research methodology outlined
-in Chapter 2, which highlights more on conceptual design and research
-strategy, this section describes the actual operational workflow
-developed in the developed framework. The processing pipeline is
-intended to transform raw legal text into understandable outputs in a
-systematic way through a series of structured analytical steps.
+user-related risk insights. 
 
-The method consists of document ingestion\index{Document Ingestion} where users upload Terms of
-Service documents via the web-based interaction. Backend service is
-used to evaluate uploaded files and to handle documents in multiple
-formats, ensuring flexibility and usability across diverse sources.
-After ingestion the text extraction process extracts the textual data
-from the documents and maintain logical order and structural
-integrity. Next, we perform semantic segmentation of the extracted
-content (coherent chunking of text at clause level). This
-segmentation mechanism maintains ongoing context and facilitates the
-efficient retrieval and reasoning tasks performed further down the line.
+Unlike in the research methodology as described in Chapter 2, which is more focused on explaining issues related
+to the conceptual design and research strategy, in this section, a description of the operational workflow
+developed in the course of creating the framework is presented.
+The operational workflow is designed to process raw legal texts and generate understandable output in a
+systematic manner through a set of analytical steps.
 
-Next, semantic embeddings\index{Semantic Embedding} are created for each segmented text unit
-using domain-adapted embedding models appropriate for representing
-subtle legal semantics. These embeddings are vectors of textual
+The process begins with a "document ingestion part" in which the user can upload documents containing "Terms of Service" in a web-based way.
+The proposed service aims to assess the documents uploaded by the user, as well as documents in multiple formats.
+The text extraction part of the documents will be performed, keeping the logical order of the documents.
+
+Then, a semantic segmentation component is applied to text data in which a coherent chunking of text is
+performed at clause-level granularity.
+The mechanism for text segmentation is designed to maintain context and facilitate text retrieval and
+reasoning, which is a subsequent step.
+Subsequently, a semantic embeddings component is applied in which embeddings for each segmented text
+component are generated using embedding models designed for legal text and its subtle semantics. 
+
+These embeddings are vectors of textual
 meaning allowing similarity-oriented retrieval over semantically
 related clauses even beyond lexical overlap. The generated embeddings
 are stored in a vector indexing\index{Vector Database} mechanism that allows fast and
 scalable nearest-neighbor search during analysis and query processing.
 
-Alongside embedding generation, language models\index{LLM} can also be used to
-extract subject-predicate-object triples\index{Triple Extraction} from textual segments, which
-in turn form the groundwork for a representation in a knowledge
-graph\index{Knowledge Graph}. Such a structured representation can account for relational
-dependencies among the entities like users, service providers,
-permissions, obligations and contractual actions. By establishing
-relationships between document components, the knowledge graph makes
-relational analysis and context connection possible beyond surface
-patterns of textual similarity, enhancing the semantic knowledge of
-contractual content.
+These embeddings are vectors of textual
+meaning allowing similarity-oriented retrieval over semantically
+related clauses even beyond lexical overlap. The generated embeddings
+are stored in a vector indexing\index{Vector Database} mechanism that allows fast and
+scalable nearest-neighbor search during analysis and query processing.
 
-In addition, to combine semantic knowledge with that of the
-structure, a hybrid retrieval mechanism\index{Hybrid Retrieval} is designed to use vector
-similarity search\index{Vector Similarity Search} together with knowledge graph traversal\index{Graph Traversal}. This
-integrated method allows one to retrieve contextually relevant
-clauses together with relationally connected information, thereby
-yielding enriched contextual assemblies that allow comprehensive
-analysis. The hybrid retrieval strategy combats the shortcomings of
-single-modality retrieval methods while also improving the richness
-of contextual evidence provided for reasoning tasks.
+Apart from using the model for the embedding of the generation, the language model can also be used for extracting subject-predicate-object triples\index{Triple Extraction} from the text segments, which can form a basis for representing the knowledge graph\index{Knowledge Graph}. The representation of the knowledge graph can give an account of the relational dependency of the entities such as users, service providers, permissions, obligations,
+contractual actions.By connecting the
+components of the documents, the knowledge graph enables the
+relational analysis that can connect the context beyond the apparent
+textual similarity.
+
+In addition with the aim of using the semantic knowledge as well as the 
+knowledge of the structure, a new hybrid retrieval technique\index{Hybrid Retrieval} 
+has been developed that can include vector similarity 
+search\index{Vector Similarity Search} as well as graph 
+traversal\index{Graph Traversal}. This will enable one to 
+retrieve not only contextually relevant information but also 
+relationally related information in a way that enriches the context of 
+the information for a comprehensive analysis thereof. The hybrid-technique 
+in information retrieval, as proposed above, will enable one to 
+transcend the limitations of different information retrieval 
+techniques and enrich the context of the information.
 
 Lastly, the contextual information retrieved is processed by a
 generative reasoning module\index{Generative Reasoning} set up for risk-based processing\index{Risk Analysis}. This
@@ -70,64 +72,50 @@ intricate legal agreements into general users’ accessible results.
 \section{Experimental  Work}
 The experimental stage of the project was characterized by iterative
 evaluation of different methods for automated clause detection and
-risk identification. Initial experimentation explored
-transformer-based models to perform question-answering tasks for
-clause extraction, giving baseline insights about what the models can
-do for understanding legal text. Subsequent experimental phases
-focused on validation of prominent components across different
-architectures, such as semantic chunking schemes, accuracy of
-embedding-based retrieval and knowledge graph construction. ToS
-documents from a variety of digital platforms were examined and
-processed in the pipeline to analyze system robustness for different
-document structures and legal formulations using multiple ToS
-documents as case studies. Overall, the comparative analysis of the
-retrieval results confirms that hybrid retrieval mechanisms achieved
-greater contextual completeness than purely semantic retrieval. Also,
-testing local and cloud-based inference modes allowed for the
-comparison of performance trade-offs between computational efficiency
-and response latency. The experiments informed architectural
-fine-tuning and supported validation of the proposed hybrid Graph-RAG framework.
+risk identification. The initial experimentation stages involved experimenting with the transformer models for ques-tion answering for clause extraction. This provided the initial insights for what these models can
+achieve for legal text understanding. Other experimentation stages involved validating different
+components of different models, including the accuracy of the semantic chunking schemes, embedding-based retrieval methods, and knowledge graphs.
+
+ToS documents from a variety of digital platforms were examined and processed in the pipeline to analyze
+system robustness for different document structures and legal formulations using multiple ToS documents as
+case studies.
+Overall, the comparative analysis of the retrieval results confirms that hybrid retrieval mechanisms achieved
+greater contextual completeness than purely semantic retrieval.
+
+In addition, testing the local and cloud-based inference modes facilitated a comparison in terms of performance trade-offs in terms of computational efficiency and response latency.
+Experiments were conducted to facilitate fine-tuning and validation of the proposed hybrid GraphRAG framework.
 
 \section{Analytical Work}
-Analytical work performed in the project mostly focused on analysing
-system outputs to address relevance, contextual integrity, and
-interpretability of the generated risk insights. We manually reviewed
-the retrieved clauses for semantic similarity search for contextually
-appropriate segments corresponding to user queries and analysis
-tasks. The extracted relationships were checked to be accurate in
-terms of logical consistency to ensure that the extracted
-relationships corresponded to that of identified entities. Graph
-traversal\index{Graph Traversal} results were checked to confirm that relational context
-contributed meaningful information beyond vector retrieval results.
-The risk analysis\index{Risk Analysis} outputs created by the reasoning module were
-checked for clarity, correctness, and alignment with the underlying
-document content. Severity scores and risk categorizations were
-observed to see if these actually represented matters of contractual
-concern, such as unilateral modifications, limitations on liability,
-and data usage permissions. From this analysis, the project ensured
-proper contextual grounding and user interpretability of system outputs.
+We manually reviewed the retrieved clauses for semantic similarity search for contextually appropriate
+segments corresponding to user queries and analysis tasks.
+The extracted relationships were checked to be accurate in terms of logical consistency to ensure that the
+extracted relationships corresponded to that of identified entities.
+
+The results obtained from graph traversal\index{Graph Traversal} were validated to ensure that the contexts provided in the relational contexts gave additional information apart from the results provided in the vector retrieval results.
+The results obtained from the risk analysis\index{Risk Analysis} module were validated in terms of their understandability, accuracy and consistency with the document content.
+
+The severity scores and the risk categories were also validated to ensure that they addressed the issues related to the interests, such as changes in contracts, liabilities and permissions related to data usage. Thus, the context grounding has been appropriately achieved for the interpretation of the user.
 
 \section{Modeling, Analysis \& Design}
 A modular and multi-tiered architecture is used to represent the
-system. The system consists of an end-user web-based interface
-(presentation layer), a back-end processing system (processing
-layer), and storage system (storage layer). The focus of the
-presentation layer is to provide an intuitive and simple-to-use
-interface for users (non-technical). The processing layer is where
-the intelligence of this system resides and consists of six
-processing modules: text extraction, semantic chunking\index{Semantic Chunking}, embedding
-generation, knowledge graph construction, hybrid retrieval, and
-generative reasoning. While each module functions independently, they
-all contribute to the same processing pipeline. The storage layer
-utilizes a graph database\index{Graph Database} that has vector indexing and relational
-storage capabilities.
+system.
+This system has its end-user interface layer, where there is the web interface and the presentation layer, the system that processes the provided information, the processing layer, and the storage system itself, the storage layer.
+The presentation layer has the role of designing a user interface that is not just intuitive but also friendly.
+The processing layer is where the intelligence of the system can be found.
+This system has six different modules in the processing layer of the system and these are the text extraction module, the semantic chunking module, the embeddings module, the knowledge graph module, the hybrid retrieval module and the generative reasoning module.
+All the modules in the system are independent of each other, though the objective of all the modules in the system is the same, at least in the procesing layer of the system.
+This storage layer has the graph database\index{Graph Database} itself.
+
 Furthermore, this design aids in retrieval and reasoning by attaching
-semantic and structural information together. The key factors in how
+semantic and structural information together. 
+The key factors in how
 the system was designed are modularity, scalability and clarity.
 Because the system separates the vector and graph representation of
-information, different retrieval options can be utilized. The modular
+information, different retrieval options can be utilised. 
+
+The modular
 processing components can accommodate future growth and enhancements
-to the processing models without the need to re-design the entire system.
+to the processing models without the need to redesign the entire system.
 
 \begin{figure}[h]
   \begin{center}
@@ -261,10 +249,9 @@ The RiskWise system was developed with a focus on responsible AI use.
 The returns on risk analysis are structured in a way that is based on
 the document context retrieved to mitigate the issue of hallucination
 in terms of how the generated explanations can be made more
-transparent in terms of interpretation. The system has a purposeful
-approach to its use in promoting user awareness rather than legal
-advice, and the generated outputs are provided in the form of
-informative insights that are meant to aid understanding.
+transparent in terms of interpretation. The system has a purposeful 
+approach to its usage in the promotion of user awareness rather than 
+legal advice and the results produced in the form of informative insights.
 \\
 
 \textbf{NLP Standards and Knowledge Representation Standards}
@@ -272,9 +259,9 @@ informative insights that are meant to aid understanding.
 Normalization methods in NLP, such as text normalization, sentence
 segmentation, and semantic chunking, are performed on a periodic
 basis for data preparation in NLP. The embedding methods used were
-based on the transformer modeling paradigm that has been popular in
+based on the transformer modeling paradim that has been popular in
 modern semantic retrieval models. Additionally, the development of
-the knowledge graph was based on the subject-predicate-object
+the knowledge graph was based on the subject predicate object
 representation paradigm that has been widely used in knowledge
 engineering, enabling data structure relationships in all document materials.
 \\
@@ -290,8 +277,8 @@ and technically transparent design, so that the system design can be
 understood, reviewed and extended by any future researcher or developer.
 Following these coding, integration and operational conventions,
 RiskWise system ensures enhanced reliability, scalability and
-interpretability while ensuring the responsible processing of user
-provided contractual data. These behaviors all facilitate the
+interpretability while ensuring the responsible procesing of user
+provided contractual data. These behaviour all facilitate the
 development of a scalable and resilient platform for in the automatic
 interpretation of legal documents.
 
