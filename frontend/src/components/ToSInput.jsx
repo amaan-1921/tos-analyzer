@@ -4,14 +4,12 @@ import { useResults } from './ResultsContext';
 function ToSInput() {
     const [file, setFile] = useState(null);
     const [progress, setProgress] = useState(0);
-    const [estimatedTime, setEstimatedTime] = useState(null);
     const [progressMessage, setProgressMessage] = useState('');
-    const [useCloud, setUseCloud] = useState(false); // Privacy-first default
+    const [useCloud, setUseCloud] = useState(true); // Demo-friendly default (local remains available)
     const [showDetails, setShowDetails] = useState(false);
-    const { setResults, setIsLoading, isLoading, setError, setHasAnalysisResults } = useResults();
+    const { setResults, setIsLoading, isLoading, setError, setHasAnalysisResults, setDocId } = useResults();
 
-    const pollAnalysisProgress = async (docId, estimatedSeconds) => {
-        const startTime = Date.now();
+    const pollAnalysisProgress = async (docId) => {
         const pollInterval = setInterval(async () => {
             try {
                 const response = await fetch(`http://localhost:8000/analysis/${docId}`);
@@ -19,11 +17,8 @@ function ToSInput() {
                 
                 const data = await response.json();
                 
-                // Calculate progress based on elapsed time and estimated time
-                const elapsedSeconds = (Date.now() - startTime) / 1000;
-                const estimatedProgress = Math.min((elapsedSeconds / estimatedSeconds) * 100, 95);
-                
-                setProgress(Math.max(data.progress, estimatedProgress));
+                // Use actual backend progress directly (0-100)
+                setProgress(data.progress || 0);
                 setProgressMessage(data.message);
                 
                 if (data.status === 'completed') {
@@ -31,13 +26,13 @@ function ToSInput() {
                     setProgress(100);
                     setProgressMessage('Analysis complete!');
                     setResults(data.result || []);
+                    setDocId(docId);
                     setHasAnalysisResults(true);
                     setIsLoading(false);
                     
                     // Keep final state visible for a moment
                     setTimeout(() => {
                         setProgress(0);
-                        setEstimatedTime(null);
                         setProgressMessage('');
                     }, 2000);
                 } else if (data.status === 'failed') {
@@ -45,7 +40,6 @@ function ToSInput() {
                     setError(`Analysis failed: ${data.message}`);
                     setIsLoading(false);
                     setProgress(0);
-                    setEstimatedTime(null);
                     setProgressMessage('');
                 }
             } catch (err) {
@@ -82,14 +76,12 @@ function ToSInput() {
             
             const data = await response.json();
             const docId = data.doc_id;
-            const estimatedSeconds = data.estimated_time;
             
-            setEstimatedTime(estimatedSeconds);
             setProgress(10);
             setProgressMessage(data.message);
             
             // Start polling for progress
-            pollAnalysisProgress(docId, estimatedSeconds);
+            pollAnalysisProgress(docId);
         } catch (err) {
             setError(`Failed to start analysis: ${err.message}`);
             setResults([]);
@@ -287,6 +279,12 @@ function ToSInput() {
                 {isLoading && (
                     <div className="w-full max-w-md space-y-3">
                         <div className="bg-gray-800/40 p-4 rounded-lg border border-gray-700/50">
+                            <div className="flex items-center space-x-2 mb-3 pb-3 border-b border-gray-700/50">
+                                <svg className="w-4 h-4 text-teal-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <span className="text-sm font-medium text-teal-300 truncate">{file?.name}</span>
+                            </div>
                             <div className="flex justify-between items-center mb-2">
                                 <span className="text-sm text-gray-300">{progressMessage}</span>
                                 <span className="text-sm font-semibold text-teal-400">{Math.round(progress)}%</span>
@@ -297,11 +295,9 @@ function ToSInput() {
                                     style={{ width: `${progress}%` }}
                                 ></div>
                             </div>
-                            {estimatedTime && (
-                                <p className="text-xs text-gray-400 mt-2">
-                                    Estimated time: {estimatedTime} seconds
-                                </p>
-                            )}
+                            <p className="text-xs text-gray-400 mt-2">
+                                Expected time: {useCloud ? '2-3 minutes' : '15-20 minutes'}
+                            </p>
                         </div>
                     </div>
                 )}

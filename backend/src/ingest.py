@@ -5,6 +5,7 @@ from langchain_setup import driver, get_llm_models
 import json
 import uuid
 import re
+import os
 from typing import List, Tuple
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -20,6 +21,31 @@ TRIPLE_PATTERN = re.compile(r"^\(.+?,.+?,.+?\)$")
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_int(name: str, default: int) -> int:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except ValueError:
+        return default
+
+
+ENABLE_ANALYSIS_CACHE = _env_bool("ENABLE_ANALYSIS_CACHE", True)
+CLOUD_BATCH_SIZE = _env_int("CLOUD_BATCH_SIZE", 10)
+CLOUD_MAX_WORKERS = _env_int("CLOUD_MAX_WORKERS", 4)
+CLOUD_BATCH_PAUSE_SECONDS = _env_int("CLOUD_BATCH_PAUSE_SECONDS", 60)
+LOCAL_MAX_WORKERS = _env_int("LOCAL_MAX_WORKERS", 16)
+CHUNK_MAX_SIZE = _env_int("CHUNK_MAX_SIZE", 1000)
 
 def store_chunks_in_neo4j(chunks: List[str], embeddings: List) -> List[str]:
     """
@@ -183,9 +209,7 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
         doc_id: Document ID for progress tracking (optional)
         analysis_state: Global analysis state dict for progress updates (optional)
     """
-    import os
     import hashlib
-    import time
     
     # Get appropriate LLM models based on user choice
     llm_fast, llm = get_llm_models(use_cloud)
@@ -198,14 +222,14 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
     cache_file = filepath + f".analysis_{file_hash}.json"
     
     # Check if cached analysis exists
-    if os.path.exists(cache_file):
+    if ENABLE_ANALYSIS_CACHE and os.path.exists(cache_file):
         logger.info(f"Using cached analysis for {filepath}")
         with open(cache_file, 'r', encoding='utf-8') as f:
             return f.read()
     
     clear_neo4j()
     text = tp.load_text(filepath)
-    chunks_list = tp.chunk_text_spacy(text)
+    chunks_list = tp.chunk_text_spacy(text, max_chunk_size=CHUNK_MAX_SIZE)
     chunks = [item["chunk"] for item in chunks_list]
     embeddings = tp.embed_chunks(chunks)
 
@@ -214,7 +238,6 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
 
     # Parallel triple extraction with optional batching for cloud rate limits
     logger.info(f"Extracting triples from {len(chunks_list)} chunks ({'cloud with batching' if use_cloud else 'local parallel'})...")
-    chunk_triples = {}
     total_chunks = len(chunks_list)
     chunks_processed = 0
     
@@ -236,8 +259,8 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
             return chunk_id, []
     
     if use_cloud:
-        # Cloud mode: Batch processing to respect rate limits (25 requests/batch, 60s pause)
-        BATCH_SIZE = 25
+        # Cloud mode: Batch processing to respect rate limits.
+        BATCH_SIZE = max(1, CLOUD_BATCH_SIZE)
         total_batches = (len(chunks_list) + BATCH_SIZE - 1) // BATCH_SIZE
         for batch_num, i in enumerate(range(0, len(chunks_list), BATCH_SIZE)):
             batch_chunks = chunks_list[i:i + BATCH_SIZE]
@@ -247,7 +270,7 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
             if doc_id and analysis_state and doc_id in analysis_state:
                 analysis_state[doc_id]["message"] = f"Processing batch {batch_num + 1}/{total_batches}..."
             
-            with ThreadPoolExecutor(max_workers=10) as executor:
+            with ThreadPoolExecutor(max_workers=max(1, CLOUD_MAX_WORKERS)) as executor:
                 futures = {executor.submit(extract_and_store, chunk, cid): cid 
                            for chunk, cid in zip(batch_chunks, batch_ids)}
                 
@@ -258,13 +281,13 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
             
             # Pause between batches if there are more batches (rate limit safety)
             if i + BATCH_SIZE < len(chunks_list):
-                logger.info("Pausing 60s to respect API rate limits...")
+                logger.info(f"Pausing {CLOUD_BATCH_PAUSE_SECONDS}s to respect API rate limits...")
                 if doc_id and analysis_state and doc_id in analysis_state:
                     analysis_state[doc_id]["message"] = f"Rate limit pause (batch {batch_num + 1}/{total_batches})..."
-                time.sleep(60)
+                time.sleep(max(0, CLOUD_BATCH_PAUSE_SECONDS))
     else:
         # Local mode: Aggressive parallel processing (no rate limits)
-        with ThreadPoolExecutor(max_workers=16) as executor:
+        with ThreadPoolExecutor(max_workers=max(1, LOCAL_MAX_WORKERS)) as executor:
             futures = {executor.submit(extract_and_store, chunk, cid): cid 
                        for chunk, cid in zip(chunks_list, chunk_ids)}
             
@@ -299,8 +322,9 @@ def ingest(filepath: str, use_cloud: bool = False, doc_id: str = None, analysis_
     logger.info(f"Initial Analysis Complete for {filepath}")
     
     # Cache the analysis result
-    with open(cache_file, 'w', encoding='utf-8') as f:
-        f.write(analysis_json)
+    if ENABLE_ANALYSIS_CACHE:
+        with open(cache_file, 'w', encoding='utf-8') as f:
+            f.write(analysis_json)
     
     if doc_id and analysis_state and doc_id in analysis_state:
         analysis_state[doc_id]["progress"] = 90

@@ -36,6 +36,7 @@ analysis_state = {}
 
 # Global tracking of current processing mode for chat
 current_use_cloud_mode = False
+RAG_TOP_K = int(os.getenv("RAG_TOP_K", "8"))
 
 
 def estimated_analysis_time(num_chunks: int) -> int:
@@ -235,22 +236,32 @@ def query(q: QueryIn):
     Uses Groq cloud API if analysis used cloud mode, otherwise uses local LLM.
     """
     try:
-        retrieved_chunks = get_similar_chunks(q.query, k = 10)
+        retrieved_chunks = get_similar_chunks(q.query, k=RAG_TOP_K)
         if not retrieved_chunks:
-            return []
+            return ChatOut(chunks=[], response="No relevant sections were found.", retrieved_count=0, top_k=RAG_TOP_K)
+
+        # Get analysis results if doc_id is provided
+        analysis_results = None
+        if q.doc_id and q.doc_id in analysis_state:
+            analysis_results = analysis_state[q.doc_id].get("result")
 
         # Use cloud LLM for chat if analysis used cloud mode
         if current_use_cloud_mode:
             from langchain_setup import get_llm_models
-            _, chat_llm = get_llm_models(use_cloud=True)
+            _, chat_llm = get_llm_models(use_cloud=True, for_chat=True)
             logger.info("Chat: Using Groq API (cloud mode)")
         else:
             from langchain_setup import llm as chat_llm
             logger.info("Chat: Using local Ollama (private mode)")
         
-        response = generate_rag_response(q.query, retrieved_chunks, llm_model=chat_llm)
+        response = generate_rag_response(q.query, retrieved_chunks, analysis_results=analysis_results, llm_model=chat_llm)
 
-        return ChatOut(chunks= retrieved_chunks, response= response)
+        return ChatOut(
+            chunks=retrieved_chunks,
+            response=response,
+            retrieved_count=len(retrieved_chunks),
+            top_k=RAG_TOP_K,
+        )
 
     except json.JSONDecodeError as e:
         logger.error(f"Failed to parse analysis JSON from LLM: {e}")

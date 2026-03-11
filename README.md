@@ -80,7 +80,14 @@ python -m spacy download en_core_web_sm
 # NEO4J_URL=bolt://localhost:7687
 # NEO4J_USER=neo4j
 # NEO4J_PASSWORD=strongpasswd
-# GOOGLE_API_KEY=
+# GROQ_API_KEY=<single_key_optional>
+# GROQ_API_KEYS=<comma_separated_analysis_keys>
+# GROQ_CHAT_API_KEYS=<comma_separated_chat_keys>
+# ENABLE_ANALYSIS_CACHE=false
+# CLOUD_BATCH_SIZE=10
+# CLOUD_MAX_WORKERS=4
+# RAG_TOP_K=8
+# RISK_MIN_SCORE=6
 ```
 
 ### 3. Start Neo4j Database
@@ -138,7 +145,7 @@ Open your browser and navigate to: `http://localhost:5173`
 3. **Review Results**: View detected risky clauses with categories and explanations
 4. **Ask Questions**: Use the chat interface to ask specific questions about the document
 
-**Note:** Analysis results are cached. Re-uploading the same document will use the cached analysis (instant response).
+**Note:** Analysis cache behavior is controlled by `ENABLE_ANALYSIS_CACHE` in `backend/.env`.
 
 ---
 
@@ -166,7 +173,8 @@ npm run dev
 ## Performance Optimization
 
 - **Caching**: Analysis results are cached per document (based on content hash)
-- **Parallel Processing**: Triple extraction runs with 3 concurrent workers
+- **Cloud Reliability**: Supports multiple Groq API keys with retry + backoff for rate limits
+- **Parallel Processing**: Triple extraction workers and batch sizes are configurable in `backend/.env`
 - **Small Models**: For systems with limited RAM (<4GB), use smaller Ollama models:
   - `qwen2.5:1.5b` (recommended)
   - `phi3:mini`

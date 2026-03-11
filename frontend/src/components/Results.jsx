@@ -23,9 +23,15 @@ function Results() {
   if (results.length === 0) return null;
 
   // Categorize by risk score
-  const highRiskItems = results.filter(r => r.risk_score >= 8);
-  const unfairItems = results.filter(r => r.risk_score >= 6 && r.risk_score < 8);
-  const acceptableItems = results.filter(r => r.risk_score < 6);
+  const highRiskItems = results
+    .filter(r => r.risk_score >= 8)
+    .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0));
+  const unfairItems = results
+    .filter(r => r.risk_score >= 6 && r.risk_score < 8)
+    .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0));
+  const acceptableItems = results
+    .filter(r => r.risk_score < 6)
+    .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0));
   
   // Calculate statistics
   const avgRiskScore = results.length > 0 
@@ -71,9 +77,7 @@ function Results() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-500">
-        Note: LLM analysis can vary slightly between runs. Uploading the same PDF will reuse cached results.
-      </p>
+     
 
       {/* Risk Category Breakdown - Only for High Risk */}
       {Object.keys(riskCategoryCount).length > 0 && (
@@ -101,34 +105,36 @@ function Results() {
             These clauses could seriously harm you. Consider avoiding this service or proceed with extreme caution.
           </p>
           
-          {highRiskItems.map((result, index) => (
-            <div
-              key={index}
-              className="p-5 mb-4 rounded-lg animate-fade-in backdrop-blur-sm border bg-red-500/10 border-red-500/40 transition-all duration-300 hover:scale-[1.01]"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-700/50 text-red-200 border border-red-600">
-                    {result.risk_category || 'Critical'}
-                  </span>
-                  <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-500/20 text-red-300 border border-red-500/50">
-                    High Risk
-                  </span>
-                </div>
-                {result.risk_score !== undefined && (
-                  <div className="text-lg font-bold px-3 py-1 rounded-full bg-red-700/50 text-red-300">
-                    Risk: {result.risk_score}/10
+          <div className="max-h-[30rem] overflow-y-auto pr-2">
+            {highRiskItems.map((result, index) => (
+              <div
+                key={index}
+                className="p-5 mb-4 rounded-lg animate-fade-in backdrop-blur-sm border bg-red-500/10 border-red-500/40 transition-all duration-300 hover:scale-[1.01]"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-700/50 text-red-200 border border-red-600">
+                      {result.risk_category || 'Critical'}
+                    </span>
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-500/20 text-red-300 border border-red-500/50">
+                      High Risk
+                    </span>
                   </div>
-                )}
+                  {result.risk_score !== undefined && (
+                    <div className="text-lg font-bold px-3 py-1 rounded-full bg-red-700/50 text-red-300">
+                      Risk: {result.risk_score}/10
+                    </div>
+                  )}
+                </div>
+                <p className="text-gray-100 font-medium mb-3 leading-relaxed">
+                  "{result.clause_text}"
+                </p>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  <span className="font-semibold text-red-300">⚠️ Why This Is Risky:</span> {result.reasoning}
+                </p>
               </div>
-              <p className="text-gray-100 font-medium mb-3 leading-relaxed">
-                "{result.clause_text}"
-              </p>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                <span className="font-semibold text-red-300">⚠️ Why This Is Risky:</span> {result.reasoning}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
@@ -143,34 +149,36 @@ function Results() {
             These clauses significantly favor the company over you. Read carefully before accepting.
           </p>
           
-          {unfairItems.map((result, index) => (
-            <div
-              key={index}
-              className="p-5 mb-4 rounded-lg backdrop-blur-sm border bg-yellow-500/10 border-yellow-500/30 transition-all duration-300 hover:scale-[1.01]"
-            >
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-yellow-700/50 text-yellow-200 border border-yellow-600">
-                    {result.risk_category || 'One-Sided'}
-                  </span>
-                  <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/50">
-                    Unfair
-                  </span>
-                </div>
-                {result.risk_score !== undefined && (
-                  <div className="text-lg font-bold px-3 py-1 rounded-full bg-yellow-700/50 text-yellow-300">
-                    Risk: {result.risk_score}/10
+          <div className="max-h-[30rem] overflow-y-auto pr-2">
+            {unfairItems.map((result, index) => (
+              <div
+                key={index}
+                className="p-5 mb-4 rounded-lg backdrop-blur-sm border bg-yellow-500/10 border-yellow-500/30 transition-all duration-300 hover:scale-[1.01]"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-yellow-700/50 text-yellow-200 border border-yellow-600">
+                      {result.risk_category || 'One-Sided'}
+                    </span>
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/50">
+                      Unfair
+                    </span>
                   </div>
-                )}
+                  {result.risk_score !== undefined && (
+                    <div className="text-lg font-bold px-3 py-1 rounded-full bg-yellow-700/50 text-yellow-300">
+                      Risk: {result.risk_score}/10
+                    </div>
+                  )}
+                </div>
+                <p className="text-gray-100 font-medium mb-3 leading-relaxed">
+                  "{result.clause_text}"
+                </p>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  <span className="font-semibold text-yellow-300">⚠️ Why This Is Unfair:</span> {result.reasoning}
+                </p>
               </div>
-              <p className="text-gray-100 font-medium mb-3 leading-relaxed">
-                "{result.clause_text}"
-              </p>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                <span className="font-semibold text-yellow-300">⚠️ Why This Is Unfair:</span> {result.reasoning}
-              </p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
