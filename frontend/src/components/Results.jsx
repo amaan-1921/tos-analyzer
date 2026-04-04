@@ -22,50 +22,174 @@ function Results() {
 
   if (results.length === 0) return null;
 
-  const getRiskColor = (label) => {
-    if (label?.toLowerCase().includes('risky')) {
-      return 'bg-red-500/20 border-l-4 border-red-500';
-    } else if (label?.toLowerCase().includes('unfair') || label?.toLowerCase().includes('warning')) {
-      return 'bg-yellow-500/20 border-l-4 border-yellow-500';
-    } else if (label?.toLowerCase().includes('fair') || label?.toLowerCase().includes('neutral')) {
-      return 'bg-green-500/20 border-l-4 border-green-500';
+  // Categorize by risk score
+  const highRiskItems = results
+    .filter(r => r.risk_score >= 8)
+    .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0));
+  const unfairItems = results
+    .filter(r => r.risk_score >= 6 && r.risk_score < 8)
+    .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0));
+  const acceptableItems = results
+    .filter(r => r.risk_score < 6)
+    .sort((a, b) => (b.risk_score || 0) - (a.risk_score || 0));
+  
+  // Calculate statistics
+  const avgRiskScore = results.length > 0 
+    ? (results.reduce((sum, r) => sum + (r.risk_score || 0), 0) / results.length).toFixed(1)
+    : 0;
+  
+  // Group by risk category for high risk items only
+  const riskCategoryCount = {};
+  highRiskItems.forEach(r => {
+    if (r.risk_category) {
+      riskCategoryCount[r.risk_category] = (riskCategoryCount[r.risk_category] || 0) + 1;
     }
-    return 'bg-gray-700';
+  });
+
+  const getRiskScoreColor = (score) => {
+    if (score >= 7) return 'text-red-400';
+    if (score >= 4) return 'text-yellow-400';
+    return 'text-green-400';
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-gray-800/50 backdrop-blur-sm p-6 rounded-xl shadow-2xl border border-gray-700/50 mb-6">
-      <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-        <div className="w-2 h-2 bg-teal-400 rounded-full mr-3 animate-pulse"></div>
-        Analysis Results
-      </h3>
-      {results.map((result, index) => (
-        <div
-          key={index}
-          className={`p-5 mb-4 rounded-lg animate-fade-in backdrop-blur-sm border transition-all duration-300 hover:scale-[1.01] ${
-            getRiskColor(result.label)
-          }`}
-        >
-          <div className="mb-3">
-            <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-gray-700/50 text-gray-200 mr-3 border border-gray-600">
-              {result.risk_category || 'General'}
-            </span>
-            <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full border ${
-              result.label?.toLowerCase().includes('risky') ? 'bg-red-500/20 text-red-300 border-red-500/50' :
-              result.label?.toLowerCase().includes('unfair') ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/50' :
-              'bg-green-500/20 text-green-300 border-green-500/50'
-            }`}>
-              {result.label}
-            </span>
-          </div>
-          <p className="text-gray-100 font-medium mb-3 leading-relaxed">
-            {result.clause_text}
+    <div className="w-full max-w-4xl mx-auto space-y-6">
+      {/* Summary Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="bg-gradient-to-br from-red-500/20 to-red-600/10 p-4 rounded-lg border border-red-500/30">
+          <p className="text-gray-400 text-sm">🚨 High Risk</p>
+          <p className={`text-3xl font-bold ${highRiskItems.length > 0 ? 'text-red-400' : 'text-gray-400'}`}>
+            {highRiskItems.length}
           </p>
-          <p className="text-gray-300 text-sm leading-relaxed">
-            <span className="font-semibold text-gray-200">Analysis:</span> {result.reasoning}
+          <p className="text-xs text-gray-500 mt-1">8-10/10 severity</p>
+        </div>
+        <div className="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 p-4 rounded-lg border border-yellow-500/30">
+          <p className="text-gray-400 text-sm">⚠️ Unfair</p>
+          <p className="text-3xl font-bold text-yellow-400">{unfairItems.length}</p>
+          <p className="text-xs text-gray-500 mt-1">6-7/10 severity</p>
+        </div>
+        <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 p-4 rounded-lg border border-blue-500/30">
+          <p className="text-gray-400 text-sm">Avg Risk Score</p>
+          <p className={`text-3xl font-bold ${getRiskScoreColor(parseFloat(avgRiskScore))}`}>
+            {avgRiskScore}/10
+          </p>
+          <p className="text-xs text-gray-500 mt-1">{results.length} clauses analyzed</p>
+        </div>
+      </div>
+
+     
+
+      {/* Risk Category Breakdown - Only for High Risk */}
+      {Object.keys(riskCategoryCount).length > 0 && (
+        <div className="bg-red-900/20 backdrop-blur-sm p-5 rounded-xl border border-red-500/30">
+          <h4 className="text-lg font-semibold text-red-300 mb-4">⚠️ High Risk Categories</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {Object.entries(riskCategoryCount).map(([category, count]) => (
+              <div key={category} className="bg-red-800/40 p-3 rounded-lg border border-red-600/30">
+                <p className="text-red-300 text-sm font-medium">{category}</p>
+                <p className="text-2xl font-bold text-red-400">{count}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* High Risk Clauses - Highlighted First */}
+      {highRiskItems.length > 0 && (
+        <div className="bg-red-900/30 backdrop-blur-sm p-6 rounded-xl shadow-2xl border-2 border-red-500/50">
+          <h3 className="text-2xl font-bold text-red-300 mb-6 flex items-center">
+            <div className="w-3 h-3 bg-red-500 rounded-full mr-3 animate-pulse"></div>
+            🚨 HIGH RISK CLAUSES ({highRiskItems.length})
+          </h3>
+          <p className="text-gray-300 text-sm mb-6 bg-red-900/30 p-3 rounded-lg border-l-4 border-red-500">
+            These clauses could seriously harm you. Consider avoiding this service or proceed with extreme caution.
+          </p>
+          
+          <div className="max-h-[30rem] overflow-y-auto pr-2">
+            {highRiskItems.map((result, index) => (
+              <div
+                key={index}
+                className="p-5 mb-4 rounded-lg animate-fade-in backdrop-blur-sm border bg-red-500/10 border-red-500/40 transition-all duration-300 hover:scale-[1.01]"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-700/50 text-red-200 border border-red-600">
+                      {result.risk_category || 'Critical'}
+                    </span>
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-red-500/20 text-red-300 border border-red-500/50">
+                      High Risk
+                    </span>
+                  </div>
+                  {result.risk_score !== undefined && (
+                    <div className="text-lg font-bold px-3 py-1 rounded-full bg-red-700/50 text-red-300">
+                      Risk: {result.risk_score}/10
+                    </div>
+                  )}
+                </div>
+                <p className="text-gray-100 font-medium mb-3 leading-relaxed">
+                  "{result.clause_text}"
+                </p>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  <span className="font-semibold text-red-300">⚠️ Why This Is Risky:</span> {result.reasoning}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Unfair Clauses */}
+      {unfairItems.length > 0 && (
+        <div className="bg-yellow-900/20 backdrop-blur-sm p-6 rounded-xl shadow-xl border border-yellow-500/40">
+          <h3 className="text-2xl font-bold text-yellow-300 mb-6 flex items-center">
+            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+            ⚠️ UNFAIR CLAUSES ({unfairItems.length})
+          </h3>
+          <p className="text-gray-300 text-sm mb-6 bg-yellow-900/30 p-3 rounded-lg border-l-4 border-yellow-500">
+            These clauses significantly favor the company over you. Read carefully before accepting.
+          </p>
+          
+          <div className="max-h-[30rem] overflow-y-auto pr-2">
+            {unfairItems.map((result, index) => (
+              <div
+                key={index}
+                className="p-5 mb-4 rounded-lg backdrop-blur-sm border bg-yellow-500/10 border-yellow-500/30 transition-all duration-300 hover:scale-[1.01]"
+              >
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-yellow-700/50 text-yellow-200 border border-yellow-600">
+                      {result.risk_category || 'One-Sided'}
+                    </span>
+                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-300 border border-yellow-500/50">
+                      Unfair
+                    </span>
+                  </div>
+                  {result.risk_score !== undefined && (
+                    <div className="text-lg font-bold px-3 py-1 rounded-full bg-yellow-700/50 text-yellow-300">
+                      Risk: {result.risk_score}/10
+                    </div>
+                  )}
+                </div>
+                <p className="text-gray-100 font-medium mb-3 leading-relaxed">
+                  "{result.clause_text}"
+                </p>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  <span className="font-semibold text-yellow-300">⚠️ Why This Is Unfair:</span> {result.reasoning}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Acceptable Clauses Footer */}
+      {acceptableItems.length > 0 && (
+        <div className="bg-gray-800/30 backdrop-blur-sm p-4 rounded-lg border border-gray-700/50 text-center">
+          <p className="text-gray-400 text-sm">
+            ✓ <span className="font-semibold text-gray-300">{acceptableItems.length}</span> acceptable clause{acceptableItems.length !== 1 ? 's' : ''} (risk score &lt; 6/10) — no action needed
           </p>
         </div>
-      ))}
+      )}
       
       {!showChat && (
         <div className="mt-8 text-center border-t border-gray-700/50 pt-6">
@@ -76,10 +200,10 @@ function Results() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
-            <span>Discuss Analysis</span>
+            <span>Ask Questions About These Risks</span>
           </button>
           <p className="text-gray-400 text-sm mt-3">
-            Have questions about the analysis? Start a conversation to learn more.
+            Want to understand more about these risky clauses? Chat with the analyzer.
           </p>
         </div>
       )}

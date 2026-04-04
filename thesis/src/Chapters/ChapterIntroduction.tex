@@ -1,0 +1,163 @@
+\chapter{INTRODUCTION} % Main chapter title
+\label{ChapterIntroduction} % For referencing the chapter elsewhere,
+% use \ref{ChapterIntroduction}
+
+Digital services have been growing exponentially and changed the way
+people are approaching technologies, allowing for the easy access to
+any apps, platforms, and the whole digital ecosystem. 
+The expansion mentioned has also led to a lot of dependence on digital contractual agreements, 
+such as Terms of Service (ToS), Privacy Policies, and 
+End-User License Agreements (EULAs) which users have to accept prior to accessing services.
+
+Although these agreements are important since they provide 
+legal relationships between users and service providers, they are 
+often very long and complicated. Because of this, the user finds it 
+difficult to read and fully understand them before accepting the 
+service, which raises concerns about whether or not the users 
+are truly given informed consent and if transparency exists.
+But on the bright side, the recent development of AI and 
+Natural Language Processing\index{NLP} have made it possible to automatically 
+analyse complex text without requiring prior knowledge of the content. 
+Techniques like semantic embeddings\index{Semantic Embedding}, knowledge graphs\index{Knowledge Graph}, and
+Retrieval-Augmented Generation\index{RAG} allow intelligent systems 
+to extract useful insights from unstructured documents, 
+while also preserving the meaning.
+
+By applying the advancements mentioned above, within an AI-based framework 
+to analyze legal agreements, the RiskWise initiative aims to generate 
+intelligent and risk-aware insights, that help users better understand 
+legal and other publicly available documents.
+This chapter discusses the background, motivation, and problem formulation of the proposed system.
+
+\section{Context and Background Study}
+As the extent of digital services and online 
+platforms is expanding at a rapid rate, users are 
+becoming more and more bound by Terms of Service (ToS), 
+Privacy Policies and End User License Agreements (EULAs) 
+in order to gain access to apps/services. 
+What these documents do, is that they serve as legally binding 
+agreements between service providers and users 
+outlining their right, responsibilities, limitations of 
+liability, data usage policies, termination conditions and 
+other contractual terms related to the use of service.  
+Such agreements are necessary in order to make legal relationships 
+between parties in digital ecosystems. But since the general user 
+experience is often poor, their practical effectiveness is often reduced. 
+Although these agreements are important, studies and user behaviour data 
+show that most users either rarely read these documents 
+completely or do not fully understand them.
+The documents being too lengthy, 
+having complicated legal language, etc. are the 
+main reasons that contribute to this.
+
+This general disengagement results in a great divide between user
+informed consent and user understanding, that has implications for
+the legitimacy of informed consent in the digital realm. 
+Therefore, users could often agree to the terms and not even be 
+aware of the possibilities for the complete collection of their 
+data, unilateral changes to policies, subscription renewals, etc. 
+This could lead to tremendous risks for their privacy, financial obligations, 
+and access to services. 
+New developments in Artificial Intelligence, specifically Large Language Models (LLMs)\index{LLM} and
+Natural Language Processing (NLP)\index{NLP}, have proven tremendous scope for the 
+automatic understanding of complex texts. On top of that, new techniques 
+such as Retrieval-Augmented Generation (RAG)\index{RAG}, semantic embeddings\index{Semantic Embedding}, and
+knowledge graph\index{Knowledge Graph} representations enable structured understanding from 
+unstructured texts (for example, semantic meaning and relationship). 
+These new developments are useful when it comes to creation of 
+intelligent systems that can assist in the comprehension of legal documents.
+
+The RiskWise framework, in this technological context, is presented here as an 
+AI-driven solution to deal with legal documents, identify potentially 
+risky clauses and present findings in a simplified and user-centric way. 
+Using the hybrid form of 2 retrieval and reasoning mechanism, the idea is 
+to create a link between the complexity of a contract and user 
+understanding to guide decision making in digital interactions.
+
+\section{Need Analysis}
+A lot of practical, technical and societal reasons for the need of an
+automated Terms and Conditions analysis system exist. First of all, 
+modern digital ecosystems involve high levels of communication with a 
+variety of online services, each one of which requires users to accept 
+contractual agreements.
+Time-consuming and requiring legal literacy that non-standard 
+users lack, reading these items by hand results in
+surface acceptance but not much consideration of the content.
+
+Second, entities often include clauses granting wide discretion such
+as the exclusive power to change clauses, the broad flexibility to
+share data and the rights to cancel accounts. When no analytical
+support is provided, users are exposed to unknowingly accepting
+unsatisfactory terms within a contract that may threaten their
+privacy, financial obligations to customers or their access to
+services.
+
+Thirdly, today’s automated applications are primarily focused upon 
+providing a description of the work that the users have done and 
+fail to interpret the risk they have detected. 
+Summarization may be an instrument to reduce the difficulty of 
+documents but does not necessarily check for clauses, introducing 
+foreseeable potential risks (and why they might be associated). 
+Consequently, users need systems which can not only minimize 
+but also strategically identify, classify and
+situate contractual risks\index{Risk Analysis}
+(and why they might be associated).
+
+Consequently, users need systems
+which can not only minimize but also strategically identify, classify
+and situate contractual risks. Furthermore, the widespread global
+trend towards digital privacy and protection of consumers as well as
+compliance requirements demands that we find mechanisms that allow us
+to promote transparency to give the right of informed consent to
+participants. It allows the system to identify material clauses,
+categorize potential risks, and walks the user through an interactive
+exploration of contractual content, and greatly increases their
+knowledge and decision-making capacity. Thus, there is a great demand
+for the proposed intelligent, user-friendly and privacy-preserving
+system for the assistance of users to weigh legal contracts prior to 
+acceptance.
+
+\section{Problem Identification}
+The most important problem the project addresses is that users
+find it difficult to understand and assess complex legal documents in
+the digital service industry. This is due to several
+flaws in the system. Firstly, legal documents contain specialised legal language
+and complex linguistic structures that are difficult to understand
+for laymen. Secondly, the nature of agreements is such that it discourages
+complete reading, where selective attention (or complete avoidance)
+takes place. Thirdly, a layman may not have
+the necessary legal knowledge to understand the implications of the contract
+such that they are unable to point out clauses that might have a
+potential impact on their rights and obligations.
+
+In addition, there are no easy to use tools for pointing out
+unfair or risky contract terms. The current state has
+low levels of interactivity, which might be detrimental to the
+users, as they may not be able to pose questions about certain
+contract terms. All these issues make the users not aware of the context, 
+which makes them vulnerable to privacy
+infringements, financial risks, and service termination with
+too little understanding.
+
+\section{Problem Formulation}
+Building on the difficulties we have described here, this project
+explains the difficulty in terms of designing and putting into
+practice an intelligent system for automatically evaluating Terms and
+Conditions documents and giving users easily understandable,
+risk-aware insights. The suggested system must fulfil a number of
+usability and technical requirements in order to fully accomplish this goal.
+
+Working with documents in different formats, extracting useful
+semantic information from legal text, identifying and classifying
+clauses\index{Clause Detection} based on potential risk, and offering explainable reasoning\index{Explainable AI}
+to support risk assessments are some of the essential system
+requirements. To facilitate deeper user understanding, the system
+must also allow interactive querying and offer a trade-off between
+user privacy requirements and performance.
+
+This problem was chosen because of its applicability,
+interdisciplinary characteristics, and possible implications for
+society. The objective of this project is to enhance user
+participation in digital decision-making processes and eliminate the
+complexity hurdle that comes with legal documents using modern NLP
+approaches, knowledge graphs, and interaction mechanisms.

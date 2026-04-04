@@ -10,6 +10,7 @@ export function ResultsProvider({ children }) {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [hasAnalysisResults, setHasAnalysisResults] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [docId, setDocId] = useState(null);
 
   return (
     <ResultsContext.Provider value={{ 
@@ -26,7 +27,9 @@ export function ResultsProvider({ children }) {
       hasAnalysisResults,
       setHasAnalysisResults,
       showChat,
-      setShowChat
+      setShowChat,
+      docId,
+      setDocId
     }}>
       {children}
     </ResultsContext.Provider>

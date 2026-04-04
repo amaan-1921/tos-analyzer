@@ -1,0 +1,138 @@
+\chapter{RESEARCH METHODOLOGY}
+\label{ChapterResearchMethodology}
+
+\section{Research Approach}
+We use a hybrid research design combining the principles of design
+science research and applied research methodology in implementing
+this study. The main purpose of the work is to design, develop, and
+evaluate an intelligent program which analyzes Terms of Service (ToS)
+documents and helps detect potentially risky clauses. The research of
+design science is evidenced by an operative artifact, which can be
+known as RiskWise, that uses the latest techniques of Natural
+Language Processing (NLP), Knowledge Graphs, and Retrieval-Augmented
+Generation (RAG) for solving a real-world problem. Simultaneously, we
+see the elements of applied research, as the project aspires for a
+practical technological solution to the challenge of user
+comprehension of complex legal agreements. Research involved
+iterative problem understanding, literature exploration, system
+design, implementation, and validation through both experimental and
+case-based testing. This allowed for iterative improvements in system
+architecture and analysis pipeline based on insights obtained during
+development.
+
+\section{Preliminary Research and Literature Exploration}
+We did a preliminary literature review to get an idea of the current
+research on things like AI-assisted contract understanding, unfair
+clause detection, and legal document analysis. We acquired pertinent
+research articles and technical materials from academic databases and
+repositories (e.g., Google Scholar, arXiv, IEEE Xplore) via reference
+tracing from specific publications. The literature search focused on
+keywords such as Terms of Service clause detection, unfair ToS
+detection utilising NLP, legal document analysis, knowledge
+graph-based legal reasoning, Retrieval-Augmented Generation for legal
+documents, and Graph-RAG architectures. We looked at about 10 to 15
+papers and chose 6 to 8 to read closely because they were new,
+relevant to legal document processing, methodologically innovative,
+and useful for explainable AI-driven legal analysis.
+\\
+This exploratory phase helped us find important research areas that
+need more study, such as the fact that traditional NLP models are not
+good at structural reasoning, there are no clear ways to identify
+risks, and there is a need for hybrid search strategies that combine
+semantic similarity with relational reasoning.
+
+\section{System Development Methodology}
+The RiskWise system was made using a method that involved making
+prototypes and trying things out over and over. The project goes
+through a number of iterations. It starts with exploratory exercises
+using different clause detection models and ends with the design of a
+hybrid architecture that includes building a knowledge graph and
+RAG-based reasoning.
+\\
+First, we did comparative analyses of transformer-based models for
+clause extraction tasks. This helped us understand the pros and cons
+of text-based methods. Based on these results, the system
+architecture was gradually improved to include structured ways to
+store legal information and ways to find it that take into account the context.
+The iterative method made the system's parts modular, such as the
+document ingestion, semantic chunking, embedding generation,
+knowledge graph construction, hybrid retrieval logic, and generative
+reasoning modules. Every release of the work gradually improved the
+functionality of the features without changing how they worked with
+earlier versions. This way, the system's abilities can gradually improve.
+
+\section{Proposed Methodological Framework}
+The methodological framework of the project is based on a multi-stage
+processing pipeline designed to transform unstructured legal
+documents into an interpretable knowledge representation and risk
+analysis output. The major methodological stages are summarized below.
+
+\section{Document Ingestion and Semantic Parsing}
+It starts when users upload ToS documents in supported formats. Text
+extraction methods are used to extract raw textual content from
+documents, and semantic segmentation is performed into meaningful
+chunks. Semantic chunking\index{Semantic Chunking}, as opposed to fixed-length segmentation
+that discards contextual boundaries such as clauses and sections, can
+enhance the quality of downstream retrieval.
+
+\subsection{Embedding Generation and Vector Indexing}
+Semantic embeddings\index{Semantic Embedding} are obtained for each segment of the text chunk,
+based on our domain-adapted embedding models which can represent
+legal semantics. Similarity-based retrieval is performed by storing
+such embeddings in a vector index, which facilitates efficient
+similarity-based retrieval during query processing. The vector\index{Vector Database}
+component of the system is responsible for fuzzy matching and
+semantic equivalence detection of legal terminology variations.
+
+\subsection{Knowledge Graph Construction}
+Alongside embedding generation, the system builds out a knowledge
+graph for the document. Large Language Models\index{LLM} are used to derive
+subject-predicate-object triples\index{Triple Extraction} that describe relationships between
+entities such as service providers, users, data, and obligations.
+These triples are mapped to a structured legal ontology and stored in
+a graph database\index{Graph Database}, preserving relational and logical dependencies
+within the document.
+
+\subsection{Hybrid Retrieval Mechanism}
+In the system we implement a hybrid retrieval strategy\index{Hybrid Retrieval} involving
+vector similarity\index{Vector Similarity Search} and knowledge graph traversal\index{Graph Traversal}. Vector retrieval
+retrieves semantically relevant clauses, and graph traversal finds
+relationally connected information which don't share the common
+vocabulary. Incorporating these retrieval signals forms the
+comprehensive background information that further justifies the
+reasoning ability.
+
+\subsection{Generative Reasoning and Risk Analysis}
+A generative language model\index{Generative Reasoning} set up as a legal risk assessor\index{Risk Analysis} gets the
+combined contextual information. The model analyses clauses, finds
+potentially risky parts of contracts, gives them severity scores, and
+makes natural language summaries that are easy to understand based on
+the context it finds. Using citations to prompt further increases the
+transparency and traceability of outputs.
+
+\section{Evaluation Strategy}
+The proposed system underwent a system evaluation utilising
+qualitative case-study analysis. We looked at a few Terms of Service
+documents with the developed pipeline to see how it works, how well
+it can find risks, and how well it can respond. Experimental phases
+culminating in comparative model evaluation have yielded additional
+empirical evidence for baseline clause extraction performance. A
+manual inspection of system outputs was conducted to confirm the
+relevance of identified clauses, the appropriateness of risk
+categorization, and contextual accuracy of generated explanations.
+Since the project was exploratory and prototype-based, it was thought
+that a qualitative validation method would be best.
+
+\section{Validation and Reliability Measures}
+To ensure the system's results are reliable and trustworthy, a method
+has been set up that includes several validation steps.
+Retrieval-Augmented Generation allowed the model to build its answers
+based on a document it had found instead of just using the knowledge
+it had already learned. Knowledge graph grounding made sure that
+clauses were consistent with each other, which made reasoning even
+harder. Other ways to check reliability included structured parsing
+of the information that was taken out, fallback mechanisms for
+dealing with model outputs that weren't consistent, and using
+supporting text segments in context. This combined method lowers the
+chance of hallucination and also makes it easier to understand the
+results of system-generated analysis.

@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 class QueryIn(BaseModel):
     query: str
+    doc_id: Optional[str] = None
 
 class QueryOut(BaseModel):
     clause_text: str
@@ -21,3 +22,5 @@ class QueryOut(BaseModel):
 class ChatOut(BaseModel):
     chunks: List[Dict]
     response: str
+    retrieved_count: Optional[int] = None
+    top_k: Optional[int] = None

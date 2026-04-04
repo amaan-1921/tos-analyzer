@@ -1,0 +1,46 @@
+\abstract{\addtocontents{toc}{\vspace{1em}}
+  The proliferation of digital services has led to users often
+  validating Terms of Service (ToS) and privacy agreements that are
+  lengthy, complicated and hard to understand in their entirety
+  without legal skills. As a result, users may voluntarily agree to
+  clauses that affect their privacy, financial responsibilities, and
+  legal rights. In order to meet this challenge, this project
+  introduces RiskWise, which introduces a web-based intelligent
+  system that can automatically analyze ToS documents and also
+  emphasizes potentially risky contractual clauses in an easy to
+  comprehend and explainable way. The proposed architecture combines
+  Natural Language Processing\index{NLP}, Knowledge Graph\index{Knowledge Graph} generation and
+  Retrieval-Augmented Generation\index{RAG} in a single hybrid model.
+
+  Uploaded documents are semantically parsed and chunked\index{Semantic Chunking} and then
+  embedded into document embedding\index{Semantic Embedding} in a pattern and similarity-based
+  retrieval. Concurrently, structured subject-predicate-object
+  relationships\index{Triple Extraction} are taken to build a knowledge graph that reflects
+  contractual entities and obligations.
+
+  A hybrid retrieval framework\index{Hybrid Retrieval} built upon vector similarity search\index{Vector Similarity Search}
+  and graph traversal\index{Graph Traversal} extracts enriched contextual information, which
+  is subsequently analyzed by a generative language model\index{LLM} in order to
+  detect risky clauses\index{Clause Detection}, grade them for severity\index{Risk Analysis} and generate
+  user-friendly explanations\index{Explainable AI}. The functional prototype was created
+  with a modular full stack model using a React\index{React} frontend, FastAPI\index{FastAPI}
+  backend, and graph database\index{Graph Database} that supports relational and vector\index{Vector Database} versions.
+
+  Case-based experimental testing validated the capability of the
+  system to retrieve contextually relevant clauses, justify their
+  nature, and allow interactive user exploration via conversational querying.
+
+  These findings show that hybrid Graph-RAG architectures can indeed
+  be applied to facilitate contextual completeness and
+  interpretability of automated legal document analysis. RiskWise
+  bridges these gaps by translating complex contractual content into
+  actionable insights, helping provide transparency for the digital
+  experience, supporting informed consent, and educating the audience
+  of users on what they can do in a digital landscape.
+}
+
+\textbf{\textit{Keywords}:} Terms of Service Analysis, Knowledge
+Graph, Retrieval-Augmented Generation, Legal NLP, Hybrid Retrieval,
+Explainable AI
+\clearpage % Start a new page
+

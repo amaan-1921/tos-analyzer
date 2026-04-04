@@ -120,14 +120,14 @@ def extract_html_text(path: str) -> str:
 
     text = soup.get_text(separator="\n")
     return text
-def chunk_text_spacy(text, max_chunk_size=500, overlap=1):
+def chunk_text_spacy(text, max_chunk_size=1000, overlap=0):
     """
     Break text into sentence-based chunks using spaCy, each with a unique ID.
 
     Args:
         text (str): Text to chunk.
-        max_chunk_size (int): Max characters per chunk. Defaults to 500.
-        overlap (int): Number of overlapping sentences between chunks. Defaults to 1. -1 for no overlap.
+        max_chunk_size (int): Max characters per chunk. Defaults to 1000.
+        overlap (int): Number of overlapping sentences between chunks. Defaults to 0 (no overlap).
 
     Returns:
         list[dict]: List of dicts like {"id": <uuid>, "chunk": <str>}.

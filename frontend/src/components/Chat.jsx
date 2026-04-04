@@ -3,7 +3,7 @@ import { useResults } from './ResultsContext';
 
 function Chat() {
   const [inputMessage, setInputMessage] = useState('');
-  const { chatMessages, setChatMessages, isChatLoading, setIsChatLoading, setError, setShowChat } = useResults();
+  const { chatMessages, setChatMessages, isChatLoading, setIsChatLoading, setError, setShowChat, docId } = useResults();
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -25,7 +25,10 @@ function Chat() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query: inputMessage.trim() }),
+        body: JSON.stringify({ 
+          query: inputMessage.trim(),
+          doc_id: docId
+        }),
       });
 
       if (!response.ok) {
@@ -38,7 +41,9 @@ function Chat() {
         id: Date.now() + 1,
         type: 'assistant',
         content: data.response || 'No response received',
-        chunks: data.chunks || []
+        chunks: data.chunks || [],
+        retrievedCount: data.retrieved_count,
+        topK: data.top_k,
       };
 
       setChatMessages(prev => [...prev, assistantMessage]);
@@ -111,7 +116,10 @@ function Chat() {
               <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
               {message.chunks && message.chunks.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-600/30">
-                  <p className="text-xs text-gray-400">Based on {message.chunks.length} relevant sections</p>
+                  <p className="text-xs text-gray-400">
+                    Based on {message.retrievedCount ?? message.chunks.length} retrieved section{(message.retrievedCount ?? message.chunks.length) === 1 ? '' : 's'}
+                    {message.topK ? ` (top ${message.topK})` : ''}
+                  </p>
                 </div>
               )}
             </div>
